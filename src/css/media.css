@@ -1,0 +1,44 @@
+@media (hover: hover) and (pointer: fine) {
+
+  button .table-head__text:hover {
+    color: var(--black);
+  }
+
+  .contacts__icon:hover g,
+  .contacts__icon:hover path {
+    opacity: 1;
+  }
+
+  .actions__btn:first-child:hover span {
+    color: var(--purple);
+  }
+
+  .actions__btn:last-child:hover span {
+    color: var(--red);
+  }
+
+  .main__btn:not(.main__btn:active):hover {
+    color: white;
+    background-color: var(--purple-light);
+  }
+
+  .main__btn:not(.main__btn:active):hover path {
+    fill: white;
+  }
+
+  .add-contact__delete-btn:hover {
+    border-color: var(--red);
+  }
+
+  .add-contact__delete-btn:hover path {
+    fill: var(--red);
+  }
+
+  .add-contact__btn:hover {
+    color: var(--purple);
+  }
+
+  .form__save-btn:not(.form__save-btn:active):hover {
+    background-color: var(--purple-light);
+  }
+}

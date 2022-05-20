@@ -14,10 +14,13 @@ body {
   font-family: 'Open Sans', sans-serif;
   --purple: #9873FF;
   --purple-light: #B89EFF;
+  --red: #F06A4D;
   --grey: #B0B0B0;
   --grey-light: #F4F4F6;
   --grey-border: #CECBD3;
   --black: #333;
+  --microtip-font-size: 12px;
+  --microtip-font-weight: 700;
   -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
 }
 
@@ -154,11 +157,11 @@ select:focus-visible {
   position: relative;
   width: 100%;
   min-height: 325px;
+  margin-bottom: 40px;
 }
 
 .table {
   width: 100%;
-  margin-bottom: 40px;
   border-collapse: collapse;
 }
 
@@ -178,32 +181,21 @@ select:focus-visible {
   padding-bottom: 8px;
 }
 
-/* .table-head__cell--id {
-  flex-basis: 80px;
+.table-head__cell:nth-child(5) {
+  width: 150px;
 }
 
-.table-head__cell--name {
-  flex-basis: 370px;
+.table-head__cell button {
+  align-items: center;
 }
-
-.table-head__cell--create-time,
-.table-head__cell--change-time {
-  flex-basis: 175px;
-}
-
-.table-head__cell--contacts {
-  flex-basis: 160px;
-}
-
-.table-head__cell--actions {
-  flex-basis: 180px;
-} */
 
 .table-head__text {
   margin-right: 3px;
   font-weight: 400;
   font-size: 12px;
+  white-space: nowrap;
   color: var(--grey);
+  transition: color .2s ease;
 }
 
 .table-head__text--active {
@@ -233,6 +225,10 @@ select:focus-visible {
   border: none;
 }
 
+.content-row__cell span:first-child {
+  margin-right: 10px;
+}
+
 .content-row__cell--id {
   font-weight: 400;
   font-size: 12px;
@@ -245,12 +241,42 @@ select:focus-visible {
 .content-row__cell--actions span {
   font-weight: 400;
   font-size: 14px;
+  line-height: 19px;
   color: var(--black);
 }
 
-.contacts__icon:not(:last-child) {
-  margin-right: 5px;
-  /* margin-bottom: 5px; */
+.contacts__icon {
+  vertical-align: middle;
+}
+
+.contacts__icon:not(:nth-child(5n)) {
+  margin-right: 7px;
+}
+
+.contacts__icon:nth-child(n+6) {
+  margin-top: 7px;
+}
+
+.contacts__icon g,
+.contacts__icon path {
+  transition: opacity .2s ease;
+}
+
+[aria-label][role~="tooltip"]::after {
+  padding: 10px 14px;
+  border-radius: 0;
+  background: var(--black);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+[role~="tooltip"][data-microtip-position|="top"]::before {
+  margin-bottom: 0;
+  background: none;
+  width: 0;
+  height: 0;
+  border: 4px solid transparent;
+  border-top: 7px solid var(--black);
 }
 
 .contacts__show-more-btn {
@@ -271,6 +297,10 @@ select:focus-visible {
   margin-right: 30px;
 }
 
+.actions__btn span {
+  transition: color .2s ease;
+}
+
 .content-row__cell--create-time span:last-child,
 .content-row__cell--change-time span:last-child {
   color: var(--grey);
@@ -286,6 +316,20 @@ select:focus-visible {
   font-size: 14px;
   color: var(--purple);
   border: 1px solid var(--purple);
+  transition: color .2s ease, background-color .2s ease;
+}
+
+.main__btn path {
+  transition: fill .2s ease;
+}
+
+.main__btn:active {
+  color: white;
+  background-color: var(--purple);
+}
+
+.main__btn:active path {
+  fill: white;
 }
 
 .main__btn svg,
@@ -299,17 +343,17 @@ select:focus-visible {
 
 /* ---MODALS--- */
 
-.modal-change {
-  display: none;
-}
-
-/* .modal-new {
+/* .modal-change {
   display: none;
 } */
 
-.modal-delete {
+/* .modal-add {
   display: none;
-}
+} */
+
+/* .modal-delete {
+  display: none;
+} */
 
 /* Common */
 
@@ -497,6 +541,11 @@ select:focus-visible {
   width: 27px;
   background-color: #E7E5EB;
   border: 1px solid var(--grey-border);
+  transition: border-color .2s ease;
+}
+
+.add-contact__delete-btn path {
+  transition: fill .2s ease;
 }
 
 .add-contact__btn {
@@ -505,6 +554,7 @@ select:focus-visible {
   font-weight: 600;
   font-size: 14px;
   color: var(--black);
+  transition: color .2s ease;
 }
 
 .form__save-btn {
@@ -516,6 +566,11 @@ select:focus-visible {
   font-size: 14px;
   color: white;
   background-color: var(--purple);
+  transition: background-color .2s ease;
+}
+
+.form__save-btn:active {
+  background-color: #8052FF;
 }
 
 .form__delete-btn {
@@ -530,7 +585,7 @@ select:focus-visible {
 
 /* New client modal */
 
-.modal-new__header {
+.modal-add__header {
   margin-bottom: 30px;
 }
 
