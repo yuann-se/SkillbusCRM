@@ -2,71 +2,97 @@
 
 const initialArray = [
   {
-  name: 'Джон',
-  surname: 'Леннон',
-  contacts: [
-    {
-      type: 'Телефон',
-      value: '+79217869154'
-    },
-    {
-      type: 'Email',
-      value: 'allyouneed@islove.com'
-    },
-    {
-      type: 'Twitter',
-      value: '@liveandletdie'
-    }
-  ]
-},
-{
-  name: 'Гурбангулы',
-  surname: 'Бердымухамедов',
-  lastName: 'Мяликгулыевич',
-  contacts: [
-    {
-      type: 'Телефон',
-      value: '+79046523108'
-    },
-    {
-      type: 'VK',
-      value: 'id201757016'
-    },
-    {
-      type: 'Twitter',
-      value: '@berdymuhamedov'
-    },
-    {
-      type: 'Email',
-      value: 'office@turkmenembassy.ru'
-    },
-    {
-      type: 'Instagram',
-      value: '@gmberdimuhamedow'
-    },
-    {
-      type: 'TikTok',
-      value: '@gmberdimuhamedow'
-    },
-    {
-      type: 'Snapchat',
-      value: 'gberdimuhamedoff'
-    },
-    {
-      type: 'Discord',
-      value: 'gurbanguly#9087'
-    },
-    {
-      type: 'OnlyFans',
-      value: '@turkboynextdoor'
-    },
-    {
-      type: 'Steam',
-      value: 'steamcommunity.com/id/yourturkenemy'
-    }
-  ]
-}
+    name: 'Василий',
+    surname: 'Пупкин',
+    lastName: 'Васильевич',
+    contacts: [
+      {
+        type: 'Телефон',
+        value: '+71234567890'
+      },
+      {
+        type: 'Email',
+        value: 'abc@xyz.com'
+      },
+      {
+        type: 'Facebook',
+        value: 'https://facebook.com/vasiliy-pupkin-the-best'
+      }
+    ]
+  },
+  {
+    name: 'Джон',
+    surname: 'Леннон',
+    contacts: [
+      {
+        type: 'Телефон',
+        value: '+79217869154'
+      },
+      {
+        type: 'Email',
+        value: 'allyouneed@islove.com'
+      },
+      {
+        type: 'Twitter',
+        value: '@liveandletdie'
+      }
+    ]
+  },
+  {
+    name: 'Гурбангулы',
+    surname: 'Бердымухамедов',
+    lastName: 'Мяликгулыевич',
+    contacts: [
+      {
+        type: 'Телефон',
+        value: '+79046523108'
+      },
+      {
+        type: 'Vk',
+        value: 'id201757016'
+      },
+      {
+        type: 'Twitter',
+        value: '@berdymuhamedov'
+      },
+      {
+        type: 'Email',
+        value: 'office@turkmenembassy.ru'
+      },
+      {
+        type: 'Instagram',
+        value: '@gmberdimuhamedow'
+      },
+      {
+        type: 'TikTok',
+        value: '@gmberdimuhamedow'
+      },
+      {
+        type: 'Snapchat',
+        value: 'gberdimuhamedoff'
+      },
+      {
+        type: 'Discord',
+        value: 'gurbanguly#9087'
+      },
+      {
+        type: 'OnlyFans',
+        value: '@turkboynextdoor'
+      },
+      {
+        type: 'Steam',
+        value: 'steamcommunity.com/id/yourturkenemy'
+      }
+    ]
+  }
 ]
+
+// ---Функции для работы с сервером---
+
+const modalDelete = document.querySelector('.modal-delete');
+const modalChange = document.querySelector('.modal-change');
+const modalAdd = document.querySelector('.modal-add');
+const modalCloseBtns = document.querySelectorAll('.modal__close-btn');
 
 let clientsArrayData;
 async function getClientsData() {
@@ -75,24 +101,131 @@ async function getClientsData() {
   clientsArrayData = data;
 }
 
-async function addNewClient(client) {
-  fetch('http://localhost:3000/api/clients', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(client),
+// async function addNewClient(client) {
+//   fetch('http://localhost:3000/api/clients', {
+//     method: 'POST',
+//     headers: { 'Content-Type': 'application/json' },
+//     body: JSON.stringify(client),
+//   })
+// }
+
+async function addClientData() {
+  const contactWrappers = modalAdd.querySelectorAll('.add-contact__field-wrapper');
+  let contactsArray = [];
+  contactWrappers.forEach((wrapper) => {
+    let newContact = {};
+    newContact.type = wrapper.querySelector('.current').textContent;
+    newContact.value = wrapper.querySelector('input').value;
+    contactsArray.push(newContact);
   })
+  await fetch(`http://localhost:3000/api/clients`, {
+    method: 'POST',
+    body: JSON.stringify({
+      name: modalAdd.querySelector('[name = "name"]').value,
+      surname: modalAdd.querySelector('[name = "surname"]').value,
+      lastName: modalAdd.querySelector('[name = "middle-name"]').value,
+      contacts: contactsArray,
+    }),
+    headers: { 'Content-Type': 'application/json' },
+  });
 }
 
-const modalDelete = document.querySelector('.modal-delete');
-const modalChange = document.querySelector('.modal-change');
-const modalAdd = document.querySelector('.modal-add');
-const modalCloseBtns = document.querySelectorAll('.modal__close-btn');
+async function deleteClientData() {
+  await fetch(`http://localhost:3000/api/clients/${document.querySelector('[data-delete= "delete"]').querySelector('.content-row__cell--id').textContent}`, {
+    method: 'DELETE',
+  });
+}
+
+async function saveChanges() {
+  const contactWrappers = modalChange.querySelectorAll('.add-contact__field-wrapper');
+  let contactsArray = [];
+  contactWrappers.forEach((wrapper) => {
+    let newContact = {};
+    newContact.type = wrapper.querySelector('.current').textContent;
+    newContact.value = wrapper.querySelector('input').value;
+    contactsArray.push(newContact);
+  })
+  await fetch(`http://localhost:3000/api/clients/${document.querySelector('.modal__client-id').textContent.slice(4, 100)}`, {
+    method: 'PATCH',
+    body: JSON.stringify({
+      name: modalChange.querySelector('[name = "name"]').value,
+      surname: modalChange.querySelector('[name = "surname"]').value,
+      lastName: modalChange.querySelector('[name = "middle-name"]').value,
+      contacts: contactsArray,
+    }),
+    headers: { 'Content-Type': 'application/json' },
+  });
+}
+
+// ---Вспомогательные функции---
 
 function clearTable() {
   const tableRows = document.querySelectorAll('.table__content-row');
   if (tableRows) {
     tableRows.forEach((row) => row.remove());
   }
+}
+
+function clearModal(modal) {
+  modal.querySelectorAll('.add-contact__field-wrapper').forEach((contact) => contact.remove());
+  modal.querySelectorAll('input').forEach((input) => input.value = null);
+}
+
+function removeDeleteFlag() {
+  if (document.querySelector('[data-delete= "delete"]')) {
+    document.querySelector('[data-delete= "delete"]').removeAttribute('data-delete');
+  }
+}
+
+// ---Функции отрисовки---
+
+let contactSelect;
+let customSelect;
+let contactInput;
+
+function createAddContactField(modal) {
+  const contactsWrapper = modal.querySelector('.form__contacts-wrapper');
+  const contactFieldsWrapper = document.createElement('div');
+  contactFieldsWrapper.classList.add('add-contact__field-wrapper', 'flex');
+
+  contactSelect = document.createElement('select');
+  contactSelect.classList.add('add-contact__select');
+  contactSelect.innerHTML = `<option value="Телефон" selected>Телефон</option>
+  <option value="Email">Email</option>
+  <option value="Facebook">Facebook</option>
+  <option value="Vk">Vk</option>
+  <option value="Другое">Другое</option>`;
+
+  contactInput = document.createElement('input');
+  contactInput.classList.add('add-contact__input');
+  contactInput.setAttribute('type', 'tel');
+
+  contactSelect.addEventListener('change', (ev) => {
+    if (ev.target.value === 'Телефон') {
+      contactInput.setAttribute('type', 'tel');
+    } else if (ev.target.value === 'Email') {
+      contactInput.setAttribute('type', 'email');
+    } else {
+      contactInput.setAttribute('type', 'text');
+    }
+  })
+
+  const contactDeleteBtn = document.createElement('button');
+  contactDeleteBtn.classList.add('add-contact__delete-btn', 'btn-reset');
+  contactDeleteBtn.setAttribute('type', 'button');
+  contactDeleteBtn.innerHTML = `<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path
+    d="M6 0C2.682 0 0 2.682 0 6C0 9.318 2.682 12 6 12C9.318 12 12 9.318 12 6C12 2.682 9.318 0 6 0ZM6 10.8C3.354 10.8 1.2 8.646 1.2 6C1.2 3.354 3.354 1.2 6 1.2C8.646 1.2 10.8 3.354 10.8 6C10.8 8.646 8.646 10.8 6 10.8ZM8.154 3L6 5.154L3.846 3L3 3.846L5.154 6L3 8.154L3.846 9L6 6.846L8.154 9L9 8.154L6.846 6L9 3.846L8.154 3Z"
+    fill="#B0B0B0" />
+</svg>`;
+
+  contactFieldsWrapper.append(contactSelect, contactInput, contactDeleteBtn);
+  contactsWrapper.append(contactFieldsWrapper);
+  contactDeleteBtn.addEventListener('click', (ev) => {
+    ev.stopPropagation();
+    contactFieldsWrapper.remove();
+  })
+  customSelect = NiceSelect.bind(contactSelect);
 }
 
 function createTableRow(client) {
@@ -119,19 +252,21 @@ function createTableRow(client) {
     if (i === 2) {
       td.classList.add('content-row__cell--create-time');
       const span1 = document.createElement('span');
-      span1.textContent = `${client.createdAt.slice(8, 10)}.${client.createdAt.slice(5, 7)}.${client.createdAt.slice(0, 4)}`;
+      span1.textContent = `${client.createdAt.slice(8, 10)}.${client.createdAt.slice(5, 7)}.${client.createdAt.slice(0, 4)} `;
       const span2 = document.createElement('span');
       span2.textContent = client.createdAt.slice(11, 16);
-      td.append(span1, span2);
+      span1.append(span2);
+      td.append(span1);
     }
 
     if (i === 3) {
       td.classList.add('content-row__cell--change-time');
       const span1 = document.createElement('span');
-      span1.textContent = `${client.createdAt.slice(8, 10)}.${client.createdAt.slice(5, 7)}.${client.createdAt.slice(0, 4)}`;
+      span1.textContent = `${client.createdAt.slice(8, 10)}.${client.createdAt.slice(5, 7)}.${client.createdAt.slice(0, 4)} `;
       const span2 = document.createElement('span');
       span2.textContent = client.updatedAt.slice(11, 16);
-      td.append(span1, span2);
+      span1.append(span2);
+      td.append(span1);
     }
 
     if (i === 4) {
@@ -161,7 +296,7 @@ function createTableRow(client) {
               d="M8 16C12.4183 16 16 12.4183 16 8C16 3.58172 12.4183 0 8 0C3.58172 0 0 3.58172 0 8C0 12.4183 3.58172 16 8 16ZM4 5.75C4 5.3375 4.36 5 4.8 5H11.2C11.64 5 12 5.3375 12 5.75V10.25C12 10.6625 11.64 11 11.2 11H4.8C4.36 11 4 10.6625 4 10.25V5.75ZM8.424 8.1275L11.04 6.59375C11.14 6.53375 11.2 6.4325 11.2 6.32375C11.2 6.0725 10.908 5.9225 10.68 6.05375L8 7.625L5.32 6.05375C5.092 5.9225 4.8 6.0725 4.8 6.32375C4.8 6.4325 4.86 6.53375 4.96 6.59375L7.576 8.1275C7.836 8.28125 8.164 8.28125 8.424 8.1275Z"
               fill="#9873FF" />
           </svg>`;
-          } else if (client.contacts[n].type === 'VK') {
+          } else if (client.contacts[n].type === 'Vk') {
             btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
             <g opacity="0.7">
               <path
@@ -192,10 +327,10 @@ function createTableRow(client) {
     }
 
     if (i === 5) {
-      td.classList.add('content-row__cell--actions', 'actions', 'flex');
-      const btn1 = document.createElement('button');
-      btn1.classList.add('actions__btn', 'btn-reset', 'flex');
-      btn1.innerHTML = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      td.classList.add('content-row__cell--actions', 'actions');
+      const btnChacnge = document.createElement('button');
+      btnChacnge.classList.add('actions__btn', 'btn-reset');
+      btnChacnge.innerHTML = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g opacity="0.7">
         <path
           d="M2 11.5V14H4.5L11.8733 6.62662L9.37333 4.12662L2 11.5ZM13.8067 4.69329C14.0667 4.43329 14.0667 4.01329 13.8067 3.75329L12.2467 2.19329C11.9867 1.93329 11.5667 1.93329 11.3067 2.19329L10.0867 3.41329L12.5867 5.91329L13.8067 4.69329Z"
@@ -203,13 +338,33 @@ function createTableRow(client) {
       </g>
       </svg>
       <span>Изменить</span>`;
-      btn1.addEventListener('click', () => {
+
+      btnChacnge.addEventListener('click', () => {
         modalChange.classList.add('modal--is-active');
+        tr.setAttribute('data-delete', 'delete');
+        modalChange.querySelector('.modal__client-id').textContent = `ID: ${client.id}`;
+        modalChange.querySelector('[name = "surname"]').value = client.surname;
+        modalChange.querySelector('[name = "name"]').value = client.name;
+        modalChange.querySelector('[name = "middle-name"]').value = client.lastName;
+        modalChange.querySelectorAll('.add-contact__field-wrapper').forEach((item) => item.remove());
+        if (client.contacts) {
+          client.contacts.forEach((contact) => {
+            createAddContactField(modalChange);
+            contactInput.value = contact.value;
+            contactSelect.querySelectorAll('option').forEach((option) => option.removeAttribute('selected'));
+            if (contactSelect.querySelector(`[value = "${contact.type}"]`)) {
+              contactSelect.querySelector(`[value = "${contact.type}"]`).setAttribute('selected', 'true');
+            } else {
+              contactSelect.querySelector('[value = "Другое"]').setAttribute('selected', 'true');
+            }
+            customSelect.update();
+          })
+        }
       })
 
-      const btn2 = document.createElement('button');
-      btn2.classList.add('actions__btn', 'btn-reset', 'flex');
-      btn2.innerHTML = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      const btnDelete = document.createElement('button');
+      btnDelete.classList.add('actions__btn', 'btn-reset');
+      btnDelete.innerHTML = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g opacity="0.7">
       <path
         d="M8 2C4.682 2 2 4.682 2 8C2 11.318 4.682 14 8 14C11.318 14 14 11.318 14 8C14 4.682 11.318 2 8 2ZM8 12.8C5.354 12.8 3.2 10.646 3.2 8C3.2 5.354 5.354 3.2 8 3.2C10.646 3.2 12.8 5.354 12.8 8C12.8 10.646 10.646 12.8 8 12.8ZM10.154 5L8 7.154L5.846 5L5 5.846L7.154 8L5 10.154L5.846 11L8 8.846L10.154 11L11 10.154L8.846 8L11 5.846L10.154 5Z"
@@ -217,63 +372,120 @@ function createTableRow(client) {
       </g>
       </svg>
       <span>Удалить</span>`;
-      btn2.addEventListener('click', () => {
+      btnDelete.addEventListener('click', () => {
         modalDelete.classList.add('modal--is-active');
-        document.querySelector('.modal-delete__delete-btn').addEventListener('click', async ()=> {
-          await onDelete(client.id);
-          modalDelete.classList.remove('modal--is-active');
-          clearTable();
-          await getClientsData();
-          clientsArrayData.forEach((client) => createTableRow(client));
-        });
+        tr.setAttribute('data-delete', 'delete');
       })
-      td.append(btn1, btn2);
+      td.append(btnChacnge, btnDelete);
     }
     tr.append(td);
   }
 }
 
-async function onDelete(id) {
-  const response = await fetch(`http://localhost:3000/api/clients/${id}`, {
-    method: 'DELETE',
-  });
-  const data = response.json();
-}
 
-
-
-
+// ---------------------------------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------------------------------
 
 document.addEventListener('DOMContentLoaded', async () => {
 
-  // initialArray.forEach((client) => addNewClient(client));
+  // await initialArray.forEach((client) => addNewClient(client));
 
   await getClientsData();
+  // console.log(clientsArrayData);
 
   clearTable();
 
   clientsArrayData.forEach((client) => createTableRow(client));
 
+
+  // ---Модальные окна---
+
+  // Закрытие по клику на кнопку
   modalCloseBtns.forEach((btn) => {
     btn.addEventListener('click', () => {
-    document.querySelector('.modal--is-active').classList.remove('modal--is-active');
+      clearModal(document.querySelector('.modal--is-active'));
+      document.querySelector('.modal--is-active').classList.remove('modal--is-active');
+      removeDeleteFlag();
     })
-  })
+  });
 
-  document.querySelector('.modal-delete__cancel-btn').addEventListener('click', () => {
-    modalDelete.classList.remove('modal--is-active');
-  })
-
+  // Закрытие по клику на оверлей
   document.querySelectorAll('.modal').forEach(modal =>
     modal.addEventListener('click', (ev) => {
       if (!ev.target.closest('.modal__content')) {
         document.querySelector('.modal--is-active').classList.remove('modal--is-active');
+        removeDeleteFlag();
+        clearModal(modal);
       }
     })
   )
 
-  // addNewClient(newClient);
-  // getClientsData();
+  // ---"Изменить данные"---
+  modalChange.querySelector('.modal__form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    await saveChanges();
+    modalChange.classList.remove('modal--is-active');
+    clearTable();
+    await getClientsData();
+    clientsArrayData.forEach((client) => createTableRow(client));
+  })
+
+  modalChange.querySelector('.form__delete-btn').addEventListener('click', () => {
+    modalDelete.classList.add('modal--is-active');
+  })
+
+  modalChange.querySelector('.add-contact__btn').addEventListener('click', () => {
+    createAddContactField(modalChange);
+    if (modalChange.querySelectorAll('.add-contact__field-wrapper').length === 10) {
+      modalChange.querySelector('.add-contact__btn').classList.add('btn-disabled');
+      modalChange.querySelector('.add-contact__btn').setAttribute("disabled", "disabled");
+    }
+  })
+
+
+  // ---"Добавить клиента"---
+  document.querySelector('.main__btn').addEventListener('click', () => {
+    modalAdd.classList.add('modal--is-active');
+  })
+
+  modalAdd.querySelector('.modal__form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    await addClientData();
+    modalAdd.classList.remove('modal--is-active');
+    clearTable();
+    await getClientsData();
+    clientsArrayData.forEach((client) => createTableRow(client));
+    clearModal(modalAdd);
+  })
+
+  modalAdd.querySelector('.form__reset-btn').addEventListener('click', () => modalAdd.classList.remove('modal--is-active'));
+
+  modalAdd.querySelector('.add-contact__btn').addEventListener('click', () => {
+    createAddContactField(modalAdd);
+    if (modalAdd.querySelectorAll('.add-contact__field-wrapper').length === 10) {
+      modalAdd.querySelector('.add-contact__btn').classList.add('btn-disabled');
+      modalAdd.querySelector('.add-contact__btn').setAttribute("disabled", "disabled");
+    }
+  })
+
+
+  // ---"Удалить клиента"---
+  modalDelete.querySelector('.modal-delete__delete-btn').addEventListener('click', async () => {
+    await deleteClientData();
+    modalDelete.classList.remove('modal--is-active');
+    modalChange.classList.remove('modal--is-active');
+    clearTable();
+    await getClientsData();
+    clientsArrayData.forEach((client) => createTableRow(client));
+  });
+
+  document.querySelector('.modal-delete__cancel-btn').addEventListener('click', () => {
+    modalDelete.classList.remove('modal--is-active');
+    removeDeleteFlag();
+  })
+
+
+
 
 
 

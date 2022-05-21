@@ -176,6 +176,7 @@ select:focus-visible {
 }
 
 .table-head__cell {
+  min-width: 100px;
   text-align: left;
   padding: 0 20px;
   padding-bottom: 8px;
@@ -206,6 +207,7 @@ select:focus-visible {
   font-weight: 600;
   font-size: 10px;
   color: var(--purple);
+  white-space: nowrap;
 }
 
 .table-head__arrow {
@@ -225,8 +227,8 @@ select:focus-visible {
   border: none;
 }
 
-.content-row__cell span:first-child {
-  margin-right: 10px;
+.content-row__cell span {
+  white-space: nowrap;
 }
 
 .content-row__cell--id {
@@ -243,6 +245,22 @@ select:focus-visible {
   font-size: 14px;
   line-height: 19px;
   color: var(--black);
+}
+
+.content-row__cell--name {
+  min-width: 250px;
+}
+
+.content-row__cell--contacts {
+  min-width: 150px;
+}
+
+.content-row__cell--actions {
+  white-space: nowrap;
+}
+
+.content-row__cell--actions button {
+  vertical-align: middle;
 }
 
 .contacts__icon {
@@ -271,6 +289,7 @@ select:focus-visible {
 }
 
 [role~="tooltip"][data-microtip-position|="top"]::before {
+  bottom: 101%;
   margin-bottom: 0;
   background: none;
   width: 0;
@@ -293,6 +312,10 @@ select:focus-visible {
   vertical-align: top;
 }
 
+.actions__btn {
+  white-space: nowrap;
+}
+
 .actions__btn:first-child {
   margin-right: 30px;
 }
@@ -301,8 +324,8 @@ select:focus-visible {
   transition: color .2s ease;
 }
 
-.content-row__cell--create-time span:last-child,
-.content-row__cell--change-time span:last-child {
+.content-row__cell--create-time span span,
+.content-row__cell--change-time span span {
   color: var(--grey);
 }
 
@@ -343,32 +366,26 @@ select:focus-visible {
 
 /* ---MODALS--- */
 
-/* .modal-change {
-  display: none;
-} */
-
-/* .modal-add {
-  display: none;
-} */
-
-/* .modal-delete {
-  display: none;
-} */
-
 /* Common */
 
 .modal {
   position: fixed;
   z-index: 200;
   inset: 0;
+  padding: 50px;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
 
   visibility: hidden;
   opacity: 0;
   background-color: rgba(0, 0, 0, 0.6);
   transition: visibility .3s ease-in-out, opacity .3s ease-in-out;
   overflow-y: scroll;
+}
+
+.modal-delete {
+  z-index: 300;
+  align-items: center;
 }
 
 .modal--is-active {
@@ -379,7 +396,7 @@ select:focus-visible {
 .modal__content {
   position: relative;
   min-height: 400px;
-  width: 450px;
+  min-width: 450px;
   padding-top: 25px;
   background-color: white;
   transform: scale(.5);
@@ -527,6 +544,7 @@ select:focus-visible {
 .add-contact__input {
   height: 100%;
   width: 240px;
+  padding: 0 15px;
   font-weight: 600;
   font-size: 14px;
   color: var(--black);
@@ -555,6 +573,19 @@ select:focus-visible {
   font-size: 14px;
   color: var(--black);
   transition: color .2s ease;
+}
+
+.add-contact__btn path {
+  transition: fill .2s ease;
+}
+
+.btn-disabled {
+  cursor: default;
+  color: var(--grey);
+}
+
+.btn-disabled path {
+  fill: var(--grey);
 }
 
 .form__save-btn {
