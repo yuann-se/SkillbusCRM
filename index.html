@@ -37,23 +37,25 @@
     <div class="container main__container">
       <h2 class="main__title">Клиенты</h2>
       <div class="main__table-wrapper">
+        <div class="table__preloader flex">
+          <svg id="loading-spinner" width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle id="loading-circle-large" cx="40" cy="40" r="36" stroke="#9873FF" stroke-width="8" />
+          </svg>
+        </div>
         <table class="table">
-          <!-- <tbody class="table__preloader"></tbody> -->
           <tbody class="tbody">
             <tr class="table__head table-head">
               <th class="table-head__cell">
-                <button class="btn-reset flex">
-                  <span class="table-head__text table-head__text--active">ID</span>
-                  <svg class="table-head__arrow" width="8" height="8" viewbox="0 0 8 8" fill="none"
+                <button class="btn-reset sort-btn sort-btn--id sort-btn--active flex">
+                  <span class="table-head__text">ID</span>
+                  <svg class="table-head__arrow sorted-upwards" width="8" height="8" viewbox="0 0 8 8" fill="none"
                     xmlns="http://www.w3.org/2000/svg">
-                    <path
-                      d="M3.49691e-07 4L0.705 4.705L3.5 1.915L3.5 8L4.5 8L4.5 1.915L7.29 4.71L8 4L4 -3.49691e-07L3.49691e-07 4Z"
-                      fill="#9873FF" />
+                    <path d="M8 4L7.295 3.295L4.5 6.085L4.5 0L3.5 0L3.5 6.085L0.71 3.29L0 4L4 8L8 4Z" fill="#9873FF" />
                   </svg>
                 </button>
               </th>
               <th class="table-head__cell">
-                <button class="btn-reset flex">
+                <button class="btn-reset sort-btn sort-btn--name flex">
                   <span class="table-head__text">Фамилия Имя Отчество</span>
                   <svg class="table-head__arrow" width="8" height="8" viewbox="0 0 8 8" fill="none"
                     xmlns="http://www.w3.org/2000/svg">
@@ -63,7 +65,7 @@
                 </button>
               </th>
               <th class="table-head__cell">
-                <button class="btn-reset flex">
+                <button class="btn-reset sort-btn sort-btn--create flex">
                   <span class="table-head__text">Дата и время создания</span>
                   <svg class="table-head__arrow" width="8" height="8" viewbox="0 0 8 8" fill="none"
                     xmlns="http://www.w3.org/2000/svg">
@@ -72,7 +74,7 @@
                 </button>
               </th>
               <th class="table-head__cell">
-                <button class="btn-reset flex">
+                <button class="btn-reset sort-btn sort-btn--change flex">
                   <span class="table-head__text">Последние изменения</span>
                   <svg class="table-head__arrow" width="8" height="8" viewbox="0 0 8 8" fill="none"
                     xmlns="http://www.w3.org/2000/svg">
@@ -134,10 +136,16 @@
           </div>
           <form class="modal__form form">
             <div class="form__name-inputs-wrapper">
+              <div class="wrapper">
+                <div class="input-error-message">Это поле обязательно</div>
               <label class="form__label" for="surname">Фамилия<span>*</span></label>
               <input type="text" class="form__input" name="surname">
+              </div>
+              <div class="wrapper">
+                <div class="input-error-message">Это поле обязательно</div>
               <label for="name" class="form__label">Имя<span>*</span></label>
               <input type="text" class="form__input" name="name">
+              </div>
               <label for="middle-name" class="form__label">Отчество</label>
               <input type="text" class="form__input" name="middle-name">
             </div>
@@ -155,6 +163,7 @@
             </div>
 
             <div class="form__btns-wrapper">
+              <div class="server-error-message"></div>
               <button type="submit" class="form__save-btn btn-reset">Сохранить</button>
               <button type="button" class="form__delete-btn btn-reset">Удалить клиента</button>
             </div>
@@ -174,30 +183,19 @@
           <h3 class="modal__header modal-add__header">Новый клиент</h3>
           <form class="modal__form form">
             <div class="form__name-inputs-wrapper">
+              <div class="wrapper">
+                <div class="input-error-message">Это поле обязательно</div>
               <input type="text" class="form__input" name="surname" placeholder="Фамилия*">
+              </div>
+              <div class="wrapper">
+                <div class="input-error-message">Это поле обязательно</div>
               <input type="text" class="form__input" name="name" placeholder="Имя*">
+              </div>
               <input type="text" class="form__input" name="middle-name" placeholder="Отчество">
             </div>
 
             <div class="form__add-contact">
               <div class="form__contacts-wrapper"></div>
-              <!-- <div class="add-contact__field-wrapper flex">
-                <select class="add-contact__select">
-                  <option value="" selected>Телефон</option>
-                  <option value="">Доп. телефон</option>
-                  <option value="">Email</option>
-                  <option value="">Vk</option>
-                  <option value="">Facebook</option>
-                </select>
-                <input class="add-contact__input" type="text">
-                <button type="button" class="add-contact__delete-btn btn-reset" data-microtip-position="top" aria-label="Hey tooltip!" role="tooltip">
-                  <svg width="12" height="12" viewbox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path
-                      d="M6 0C2.682 0 0 2.682 0 6C0 9.318 2.682 12 6 12C9.318 12 12 9.318 12 6C12 2.682 9.318 0 6 0ZM6 10.8C3.354 10.8 1.2 8.646 1.2 6C1.2 3.354 3.354 1.2 6 1.2C8.646 1.2 10.8 3.354 10.8 6C10.8 8.646 8.646 10.8 6 10.8ZM8.154 3L6 5.154L3.846 3L3 3.846L5.154 6L3 8.154L3.846 9L6 6.846L8.154 9L9 8.154L6.846 6L9 3.846L8.154 3Z"
-                      fill="#B0B0B0" />
-                  </svg>
-                </button>
-              </div> -->
               <button type="button" class="add-contact__btn btn-reset">
                 <svg width="14" height="14" viewbox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path
@@ -209,6 +207,7 @@
             </div>
 
             <div class="form__btns-wrapper">
+              <div class="server-error-message"></div>
               <button type="submit" class="form__save-btn btn-reset">Сохранить</button>
               <button type="reset" class="form__delete-btn form__reset-btn btn-reset">Отмена</button>
             </div>

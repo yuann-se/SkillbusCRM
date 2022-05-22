@@ -46,15 +46,6 @@
 
 @media (max-width: 1150px) {
 
-  .table-head__cell button {
-    display: inline;
-    text-align: left;
-  }
-
-  .table-head__text {
-    white-space: initial;
-  }
-
   .table-head__cell {
     padding: 0 10px;
     padding-bottom: 8px;
@@ -77,9 +68,22 @@
   }
 }
 
-@media (max-width: 950px) {
+@media (max-width: 970px) {
   .container {
     padding: 40px 15px;
+  }
+
+  .table__preloader {
+    top: 35px;
+  }
+
+  .table-head__cell button {
+    display: inline;
+    text-align: left;
+  }
+
+  .table-head__text {
+    white-space: initial;
   }
 
   .content-row__cell span {
@@ -97,6 +101,7 @@
 }
 
 @media (max-width: 750px) {
+
   .main {
     overflow-x: scroll;
   }

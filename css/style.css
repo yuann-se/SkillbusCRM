@@ -165,11 +165,69 @@ select:focus-visible {
   border-collapse: collapse;
 }
 
+/* ---Preloader--- */
+
 .table__preloader {
   position: absolute;
-  inset: 25px 0 0;
+  z-index: 300;
+  top: 25px;
+  bottom: 0;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
   background-color: #fff;
 }
+
+#loading-spinner {
+  display: block;
+  margin: 0 auto;
+  animation: loading-spinner-spin 2s linear infinite;
+  will-change: transform;
+}
+
+@keyframes loading-spinner-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+#loading-circle-large {
+  stroke-dasharray: 210;
+  stroke-dashoffset: 210;
+  stroke-linecap: round;
+  animation: loading-spinner-large 1.7s cubic-bezier(0.445, 0.05, 0.55, 0.95) infinite;
+  transform: translateZ(0);
+  transform-origin: center;
+  will-change: stroke-dashoffset;
+}
+
+@keyframes loading-spinner-large {
+  0% {
+    stroke-dashoffset: 190;
+    transform: scaleY(1);
+  }
+
+  49.99% {
+    stroke-dashoffset: 0;
+    transform: scaleY(1);
+  }
+
+  50% {
+    stroke-dashoffset: 0;
+    transform: scaleY(-1) rotate(25deg);
+  }
+
+  100% {
+    stroke-dashoffset: 190;
+    transform: scaleY(-1) rotate(-32deg);
+  }
+}
+
+/* --------- */
 
 .table__head {
   padding: 0 20px;
@@ -199,8 +257,12 @@ select:focus-visible {
   transition: color .2s ease;
 }
 
-.table-head__text--active {
+.sort-btn--active .table-head__text {
   color: var(--purple);
+}
+
+.table-head__arrow.sorted-upwards {
+  transform: rotate(180deg);
 }
 
 .table-head__sort-text {
@@ -212,6 +274,7 @@ select:focus-visible {
 
 .table-head__arrow {
   margin-right: 3px;
+  transition: transform .3s ease;
 }
 
 /* Table rows */
@@ -612,6 +675,29 @@ select:focus-visible {
   font-size: 12px;
   color: var(--black);
   text-decoration-line: underline;
+}
+
+.server-error-message,
+.input-error-message,
+.contact-error-message {
+  width: 100%;
+  margin-bottom: 10px;
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 14px;
+  color: var(--red);
+  text-align: center;
+}
+
+.input-error-message,
+.contact-error-message {
+  display: none;
+  margin-bottom: 0;
+  text-align: left;
+}
+
+.d-block {
+  display: block;
 }
 
 /* New client modal */
