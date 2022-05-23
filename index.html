@@ -29,7 +29,9 @@
             fill="white" />
         </svg>
       </div>
-      <input class="header__search-input" type="search" placeholder="Введите запрос">
+      <div class="autocomplete">
+        <input id="mainInput" class="header__search-input" type="search" placeholder="Введите запрос">
+      </div>
     </div>
   </header>
 
@@ -38,7 +40,8 @@
       <h2 class="main__title">Клиенты</h2>
       <div class="main__table-wrapper">
         <div class="table__preloader flex">
-          <svg id="loading-spinner" width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg id="loading-spinner" width="80" height="80" viewBox="0 0 80 80" fill="none"
+            xmlns="http://www.w3.org/2000/svg">
             <circle id="loading-circle-large" cx="40" cy="40" r="36" stroke="#9873FF" stroke-width="8" />
           </svg>
         </div>
@@ -134,17 +137,17 @@
             <h3 class="modal__header">Изменить данные</h3>
             <p class="modal__client-id">ID: 354235</p>
           </div>
-          <form class="modal__form form">
+          <form class="modal__form form" novalidate>
             <div class="form__name-inputs-wrapper">
               <div class="wrapper">
                 <div class="input-error-message">Это поле обязательно</div>
-              <label class="form__label" for="surname">Фамилия<span>*</span></label>
-              <input type="text" class="form__input" name="surname">
+                <label class="form__label" for="surname">Фамилия<span>*</span></label>
+                <input type="text" class="form__input to-validate" name="surname">
               </div>
               <div class="wrapper">
                 <div class="input-error-message">Это поле обязательно</div>
-              <label for="name" class="form__label">Имя<span>*</span></label>
-              <input type="text" class="form__input" name="name">
+                <label for="name" class="form__label">Имя<span>*</span></label>
+                <input type="text" class="form__input to-validate" name="name">
               </div>
               <label for="middle-name" class="form__label">Отчество</label>
               <input type="text" class="form__input" name="middle-name">
@@ -181,15 +184,15 @@
             </svg>
           </button>
           <h3 class="modal__header modal-add__header">Новый клиент</h3>
-          <form class="modal__form form">
+          <form class="modal__form form" novalidate>
             <div class="form__name-inputs-wrapper">
               <div class="wrapper">
                 <div class="input-error-message">Это поле обязательно</div>
-              <input type="text" class="form__input" name="surname" placeholder="Фамилия*">
+                <input type="text" class="form__input to-validate" name="surname" placeholder="Фамилия*">
               </div>
               <div class="wrapper">
                 <div class="input-error-message">Это поле обязательно</div>
-              <input type="text" class="form__input" name="name" placeholder="Имя*">
+                <input type="text" class="form__input to-validate" name="name" placeholder="Имя*">
               </div>
               <input type="text" class="form__input" name="middle-name" placeholder="Отчество">
             </div>

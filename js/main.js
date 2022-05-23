@@ -3,40 +3,33 @@ const initialArray = [
     name: "Василий",
     surname: "Пупкин",
     lastName: "Васильевич",
-    contacts: [
-      { type: "Телефон", value: "+71234567890" },
-      { type: "Email", value: "abc@xyz.com" },
-      {
-        type: "Facebook",
-        value: "https://facebook.com/vasiliy-pupkin-the-best",
-      },
-    ],
+    contacts: [{ type: "Телефон", value: "+71234567890" },
+    { type: "Email", value: "abc@xyz.com" },
+    {
+      type: "Facebook", value: "https://facebook.com/vasiliy-pupkin-the-best",
+    },],
   },
   {
     name: "Джон",
     surname: "Леннон",
-    contacts: [
-      { type: "Телефон", value: "+79217869154" },
-      { type: "Email", value: "allyouneed@islove.com" },
-      { type: "Twitter", value: "@liveandletdie" },
-    ],
+    contacts: [{ type: "Телефон", value: "+79217869154" },
+    { type: "Email", value: "allyouneed@islove.com" },
+    { type: "Twitter", value: "@liveandletdie" },],
   },
   {
     name: "Гурбангулы",
     surname: "Бердымухамедов",
     lastName: "Мяликгулыевич",
-    contacts: [
-      { type: "Телефон", value: "+79046523108" },
-      { type: "Vk", value: "id201757016" },
-      { type: "Twitter", value: "@berdymuhamedov" },
-      { type: "Email", value: "office@turkmenembassy.ru" },
-      { type: "Instagram", value: "@gmberdimuhamedow" },
-      { type: "TikTok", value: "@gmberdimuhamedow" },
-      { type: "Snapchat", value: "gberdimuhamedoff" },
-      { type: "Discord", value: "gurbanguly#9087" },
-      { type: "OnlyFans", value: "@turkboynextdoor" },
-      { type: "Steam", value: "steamcommunity.com/id/yourturkenemy" },
-    ],
+    contacts: [{ type: "Телефон", value: "+79046523108" },
+    { type: "Vk", value: "id201757016" },
+    { type: "Twitter", value: "@berdymuhamedov" },
+    { type: "Email", value: "office@turkmenembassy.ru" },
+    { type: "Instagram", value: "@gmberdimuhamedow" },
+    { type: "TikTok", value: "@gmberdimuhamedow" },
+    { type: "Snapchat", value: "gberdimuhamedoff" },
+    { type: "Discord", value: "gurbanguly#9087" },
+    { type: "OnlyFans", value: "@turkboynextdoor" },
+    { type: "Steam", value: "steamcommunity.com/id/yourturkenemy" },],
   },
 ];
 
@@ -45,6 +38,7 @@ const initialArray = [
 const modalDelete = document.querySelector(".modal-delete");
 const modalChange = document.querySelector(".modal-change");
 const modalAdd = document.querySelector(".modal-add");
+// const activeModal = document.querySelector(".modal--is-active");
 const modalCloseBtns = document.querySelectorAll(".modal__close-btn");
 
 let clientsArrayData;
@@ -136,11 +130,12 @@ function clearTable() {
   }
 }
 
-function clearModal(modal) {
-  modal
-    .querySelectorAll(".add-contact__field-wrapper")
+function clearModal() {
+  document.querySelector(".modal--is-active").querySelectorAll("input").forEach((input) => (input.value = null));
+  document.querySelector(".modal--is-active").querySelectorAll('.d-block').forEach((message) => message.classList.remove('d-block'));
+  document.querySelector(".modal--is-active")
+    .querySelectorAll(".contact-wrapper")
     .forEach((contact) => contact.remove());
-  modal.querySelectorAll("input").forEach((input) => (input.value = null));
 }
 
 function checkContactsAmount(modal) {
@@ -175,32 +170,36 @@ function getFilteredArray() {
   });
 }
 
-// function validateForm(modal) {
-//   if (!modal.querySelector('[name="surname"]').value) {
-//     modal.querySelectorAll('.input-error-message')[0].classList.add('d-block');
-//   }
+function inputListener() {
+  this.value ? this.closest('.wrapper').children[0].classList.remove('d-block')
+    : this.closest('.wrapper').children[0].classList.add('d-block');
+}
 
-//   if (!modal.querySelector('[name="name"]').value) {
-//     modal.querySelectorAll('.input-error-message')[1].classList.add('d-block')
-//   }
+function validateForm(modal) {
+  if (!modal.querySelector('[name="surname"]').value) {
+    modal.querySelector('[name="surname"]').closest('.wrapper').children[0].classList.add('d-block');
+  }
+  modal.querySelector('[name="surname"]').addEventListener('input', inputListener);
 
-//   modal.querySelectorAll('.contact-error-message').forEach((msg, ind) => {
-//     msg.classList.add(`contact-error-message--${ind}`);
-//   })
+  if (!modal.querySelector('[name="name"]').value) {
+    modal.querySelector('[name="name"]').closest('.wrapper').children[0].classList.add('d-block');
+  }
+  modal.querySelector('[name="name"]').addEventListener('input', inputListener);
 
-//   const allContacts = modal.querySelectorAll('.add-contact__input');
-//   allContacts.forEach((contact, ind) => {
-//     if (!contact.value) {
-//       modal.querySelector(`.contact-error-message--${ind}`).classList.add('d-block');
-//     }
-//   })
+  const allContacts = modal.querySelectorAll('.add-contact__input');
+  allContacts.forEach((input) => {
+    if (!input.value) {
+      input.closest('.wrapper').children[0].classList.add('d-block');
+    }
+    input.addEventListener('input', inputListener);
+  })
 
-//   if (modal.querySelectorAll('.d-block').length) {
-//     return false
-//   } else {
-//     return true
-//   }
-// }
+  if (modal.querySelectorAll('.d-block').length) {
+    return false
+  } else {
+    return true
+  }
+}
 
 // ---Функции отрисовки---
 
@@ -211,12 +210,12 @@ let contactInput;
 function createAddContactField(modal) {
   const contactsWrapper = modal.querySelector(".form__contacts-wrapper");
   const contactFieldsWrapper = document.createElement("div");
-  const wrapper = document.createElement('div');
-  wrapper.classList.add('wrapper');
   contactFieldsWrapper.classList.add("add-contact__field-wrapper", "flex");
+  const wrapper = document.createElement('div');
+  wrapper.classList.add('wrapper', "contact-wrapper");
   const contactErrorMessage = document.createElement('div');
   contactErrorMessage.classList.add("contact-error-message");
-  contactErrorMessage.textContent = 'Поле не может быть пустым';
+  contactErrorMessage.textContent = 'Это поле не может быть пустым';
 
   contactSelect = document.createElement("select");
   contactSelect.classList.add("add-contact__select");
@@ -227,7 +226,7 @@ function createAddContactField(modal) {
   <option value="Другое">Другое</option>`;
 
   contactInput = document.createElement("input");
-  contactInput.classList.add("add-contact__input");
+  contactInput.classList.add("add-contact__input", "to-validate");
   contactInput.setAttribute("type", "tel");
 
   contactSelect.addEventListener("change", (ev) => {
@@ -249,7 +248,7 @@ function createAddContactField(modal) {
 
   contactFieldsWrapper.append(contactSelect, contactInput, contactDeleteBtn);
   wrapper.append(contactErrorMessage, contactFieldsWrapper);
-  contactsWrapper.append(contactErrorMessage, contactFieldsWrapper);
+  contactsWrapper.append(wrapper);
   contactDeleteBtn.addEventListener("click", (ev) => {
     ev.stopPropagation();
     contactFieldsWrapper.remove();
@@ -464,42 +463,17 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   preloader.style.display = 'none';
 
-  // ---Сортировка---
-
-  sortIdBtn.addEventListener("click", () => {
-    flags.idSortedUpwards
-      ? sortDownwards(sortIdBtn, "id", "idSortedUpwards")
-      : sortUpwards(sortIdBtn, "id", "idSortedUpwards");
-  });
-
-  sortNameBtn.addEventListener("click", () => {
-    flags.nameSortedUpwards
-      ? sortDownwards(sortNameBtn, "surname + name + lastName", "nameSortedUpwards")
-      : sortUpwards(sortNameBtn, "surname + name + lastName", "nameSortedUpwards");
-  });
-
-  sortCreateBtn.addEventListener("click", () => {
-    flags.createSortedUpwards
-      ? sortDownwards(sortCreateBtn, "createdAt", "createSortedUpwards")
-      : sortUpwards(sortCreateBtn, "createdAt", "createSortedUpwards");
-  });
-
-  sortChangeBtn.addEventListener("click", () => {
-    flags.changeSortedUpwards
-      ? sortDownwards(sortChangeBtn, "updatedAt", "changeSortedUpwards")
-      : sortUpwards(sortChangeBtn, "updatedAt", "changeSortedUpwards");
-  });
-
-
   // ---Модальные окна---
-
   // Закрытие по клику на кнопку
+
   modalCloseBtns.forEach((btn) => {
     btn.addEventListener("click", () => {
-      clearModal(document.querySelector(".modal--is-active"));
-      document
-        .querySelector(".modal--is-active")
-        .classList.remove("modal--is-active");
+      document.querySelector(".modal--is-active").querySelectorAll('.to-validate').forEach(function (input) {
+        input.removeEventListener('input', inputListener);
+      })
+      // console.log(document.querySelector(".modal--is-active"));
+      clearModal();
+      document.querySelector(".modal--is-active").classList.remove("modal--is-active");
       removeDeleteFlag();
     });
   });
@@ -508,14 +482,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.querySelectorAll(".modal").forEach((modal) =>
     modal.addEventListener("click", (ev) => {
       if (!ev.target.closest(".modal__content")) {
-        document
-          .querySelector(".modal--is-active")
-          .classList.remove("modal--is-active");
+        clearModal();
+        document.querySelector(".modal--is-active").classList.remove("modal--is-active");
         removeDeleteFlag();
-        clearModal(modal);
       }
     })
   );
+
 
   // ---"Изменить данные"---
   modalChange
@@ -564,11 +537,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (responseAdd.status.toString().slice(0, 1) !== '2') {
           modalAdd.querySelector('.server-error-message').textContent = responseAdd.statusText;
         } else {
+          clearModal(modalAdd);
           modalAdd.classList.remove("modal--is-active");
           clearTable();
           await getClientsData();
           clientsArrayData.forEach((client) => createTableRow(client));
-          clearModal(modalAdd);
         }
       }
     });
@@ -610,6 +583,144 @@ document.addEventListener("DOMContentLoaded", async () => {
   window.addEventListener('resize', () => {
     preloader.style.width = `${document.querySelector('.table').offsetWidth}px`;
   })
+
+
+  // ---Сортировка---
+
+  sortIdBtn.addEventListener("click", () => {
+    flags.idSortedUpwards
+      ? sortDownwards(sortIdBtn, "id", "idSortedUpwards")
+      : sortUpwards(sortIdBtn, "id", "idSortedUpwards");
+  });
+
+  sortNameBtn.addEventListener("click", () => {
+    flags.nameSortedUpwards
+      ? sortDownwards(sortNameBtn, "surname + name + lastName", "nameSortedUpwards")
+      : sortUpwards(sortNameBtn, "surname + name + lastName", "nameSortedUpwards");
+  });
+
+  sortCreateBtn.addEventListener("click", () => {
+    flags.createSortedUpwards
+      ? sortDownwards(sortCreateBtn, "createdAt", "createSortedUpwards")
+      : sortUpwards(sortCreateBtn, "createdAt", "createSortedUpwards");
+  });
+
+  sortChangeBtn.addEventListener("click", () => {
+    flags.changeSortedUpwards
+      ? sortDownwards(sortChangeBtn, "updatedAt", "changeSortedUpwards")
+      : sortUpwards(sortChangeBtn, "updatedAt", "changeSortedUpwards");
+  });
+
+
+  // const allNames = []
+  let allNames = [];
+  async function getAllNames() {
+    const response = await fetch("http://localhost:3000/api/clients");
+    const clients = await response.json();
+    clients.forEach((client) => {
+      let clientName = `${client.surname} ${client.name} ${client.lastName}`;
+      allNames.push(clientName);
+    })
+  }
+  // ---Поиск---
+  getAllNames();
+
+  function autocomplete(inp, arr) {
+    /* функция автозаполнения принимает два аргумента,
+    элемент текстового поля и массив возможных значений автозаполнения: */
+    let currentFocus;
+    /* выполнение функции, когда кто-то пишет в текстовом поле: */
+    inp.addEventListener("input", function () {
+      let autocompleteList, nameOption, val = this.value;
+      /* закрыть все уже открытые списки значений автозаполнения */
+      closeAllLists();
+      if (!val) { return false; }
+      currentFocus = -1;
+      /* создайте элемент DIV, который будет содержать элементы (значения): */
+      autocompleteList = document.createElement("DIV");
+      autocompleteList.setAttribute("id", this.id + "autocomplete-list");
+      autocompleteList.classList.add('autocomplete-items');
+      /* добавьте элемент DIV в качестве дочернего элемента контейнера автозаполнения: */
+      this.parentNode.appendChild(autocompleteList);
+      /* для каждого элемента в массиве... */
+      for (let i = 0; i < arr.length; i++) {
+        /* проверьте, включает ли элемент те же буквы, что и значение текстового поля: */
+        if (arr[i].toUpperCase().includes(val.toUpperCase())) {
+          /* создайте элемент DIV для каждого соответствующего элемента: */
+          nameOption = document.createElement("div");
+          nameOption.innerHTML = arr[i];
+          nameOption.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+          nameOption.addEventListener("click", function () {
+            /* вставьте значение для текстового поля автозаполнения: */
+            inp.value = this.getElementsByTagName("input")[0].value;
+            /* закройте список значений автозаполнения,
+            (или любые другие открытые списки значений автозаполнения : */
+            closeAllLists();
+          });
+          autocompleteList.appendChild(nameOption);
+        }
+      }
+    });
+    /* выполнение функции нажимает клавишу на клавиатуре: */
+    inp.addEventListener("keydown", function (e) {
+      let autocompleteItems = document.getElementById(this.id + "autocomplete-list");
+      if (autocompleteItems) autocompleteItems = autocompleteItems.getElementsByTagName("div");
+      if (e.keyCode == 40) {
+        /* Если нажата клавиша со стрелкой вниз,
+        увеличение текущей переменной фокуса: */
+        currentFocus++;
+        /* и сделать текущий элемент более видимым: */
+        addActive(autocompleteItems);
+      } else if (e.keyCode == 38) { //вверх
+        /* Если нажата клавиша со стрелкой вверх,
+        уменьшите текущую переменную фокуса: */
+        currentFocus--;
+        /* и сделать текущий элемент более видимым: */
+        addActive(autocompleteItems);
+      } else if (e.keyCode == 13) {
+        /* Если нажата клавиша ENTER, предотвратите отправку формы, */
+        if (currentFocus > -1) {
+          /* и имитировать щелчок по элементу "active": */
+          if (autocompleteItems) autocompleteItems[currentFocus].click();
+        }
+      }
+    });
+
+    function addActive(items) {
+      /* функция для классификации элемента как "active": */
+      if (!items) return false;
+      /* начните с удаления "активного" класса для всех элементов: */
+      for (let i = 0; i < items.length; i++) {
+        items[i].classList.remove("autocomplete-active");
+      }
+      if (currentFocus >= items.length) currentFocus = 0;
+      if (currentFocus < 0) currentFocus = (items.length - 1);
+      /*добавить класса "autocomplete-active": */
+      items[currentFocus].classList.add("autocomplete-active");
+    }
+
+    function closeAllLists(elmnt) {
+      /* закройте все списки автозаполнения в документе,
+      кроме того, который был передан в качестве аргумента: */
+      let items = document.querySelectorAll(".autocomplete-items");
+      for (let i = 0; i < items.length; i++) {
+        if (elmnt != items[i] && elmnt != inp) {
+          items[i].parentNode.removeChild(items[i]);
+        }
+      }
+    }
+    /* выполнение функции, когда кто-то щелкает в документе: */
+    document.addEventListener("click", function (e) {
+      closeAllLists(e.target);
+    });
+  }
+
+  autocomplete(document.getElementById("mainInput"), allNames);
+
+
+
+
+
 
 
 });

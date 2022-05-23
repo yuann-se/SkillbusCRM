@@ -126,12 +126,44 @@ select:focus-visible {
   margin-right: 53px;
 }
 
+.autocomplete {
+  position: relative;
+  display: inline-block;
+}
+
+.autocomplete-items {
+  position: absolute;
+  border: 1px solid #d4d4d4;
+  border-bottom: none;
+  border-top: none;
+  z-index: 99;
+  top: 100%;
+  left: 0;
+  right: 0;
+}
+
+.autocomplete-items div {
+  padding: 10px;
+  cursor: pointer;
+  background-color: #fff;
+  border-bottom: 1px solid #d4d4d4;
+}
+
+.autocomplete-items div:hover {
+  background-color: #e9e9e9;
+}
+
+.autocomplete-active {
+  background-color: var(--purple-light) !important;
+  color: #ffffff;
+}
+
 .header__search-input {
   width: 580px;
   height: 44px;
   padding: 12px 15px;
   border: 1px solid rgba(51, 51, 51, 0.2);
-  color: var(--grey);
+  color: var(--black);
 }
 
 .header__search-input::placeholder {
