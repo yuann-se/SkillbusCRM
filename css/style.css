@@ -7,6 +7,7 @@ html {
 body {
   margin: 0 auto;
   overflow-x: hidden;
+  width: 100vw;
 }
 
 :root {
@@ -103,7 +104,7 @@ select:focus-visible {
 .container {
   max-width: 1226px;
   margin: 0 auto;
-  padding: 40px 20px;
+  padding: 40px 35px 40px 20px;
 }
 
 /* ---HEADER--- */
@@ -472,6 +473,7 @@ select:focus-visible {
   position: fixed;
   z-index: 200;
   inset: 0;
+  width: 100vw;
   padding: 50px;
   justify-content: center;
   align-items: flex-start;
@@ -715,8 +717,7 @@ select:focus-visible {
 }
 
 .server-error-message,
-.input-error-message,
-.contact-error-message {
+.input-error-message {
   width: 100%;
   margin-bottom: 10px;
   font-weight: 400;
@@ -726,11 +727,20 @@ select:focus-visible {
   text-align: center;
 }
 
-.input-error-message,
-.contact-error-message {
+.input-error-message {
   display: none;
   margin-bottom: 0;
   text-align: left;
+}
+
+.input-error-message.d-block~input,
+.input-error-message.d-block+div {
+  outline: 1px solid var(--red);
+  outline-offset: -1px;
+}
+
+.input-error-message.d-block+div {
+  outline-offset: 0;
 }
 
 .d-block {

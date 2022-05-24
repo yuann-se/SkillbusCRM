@@ -68,9 +68,9 @@
   }
 }
 
-@media (max-width: 970px) {
+@media (max-width: 1000px) {
   .container {
-    padding: 40px 15px;
+    padding: 40px 30px 40px 15px;
   }
 
   .table__preloader {
