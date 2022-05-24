@@ -2,7 +2,6 @@ html {
   box-sizing: border-box;
   overflow-x: hidden;
   scroll-behavior: smooth;
-  width: 100vw;
 }
 
 body {
@@ -315,6 +314,12 @@ select:focus-visible {
   padding: 20px;
   background-color: #fff;
   border-bottom: 1px solid var(--grey-border);
+  outline: 3px solid transparent;
+  transition: outline .5s ease;
+}
+
+.table__content-row.is-highlighted {
+  outline: 3px solid var(--purple-light);
 }
 
 .content-row__cell {
@@ -384,7 +389,7 @@ select:focus-visible {
 }
 
 [role~="tooltip"][data-microtip-position|="top"]::before {
-  bottom: 101%;
+  bottom: 105%;
   margin-bottom: 0;
   background: none;
   width: 0;
