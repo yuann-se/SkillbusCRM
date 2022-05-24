@@ -365,41 +365,43 @@ const sortCreateBtn = document.querySelector(".sort-btn--create");
 const sortChangeBtn = document.querySelector(".sort-btn--change");
 const allSortBtns = document.querySelectorAll(".sort-btn");
 let sortedArray;
-let flags = {
-  idSortedUpwards: true,
-  nameSortedUpwards: false,
-  createSortedUpwards: false,
-  changeSortedUpwards: false,
-};
 
-function sortUpwards(element, flag, param) {
+// Функция для сортировки по клику на кнопку сортировки
+async function sortTable(element, param) {
   allSortBtns.forEach((btn) => btn.classList.remove("sort-btn--active"));
   element.classList.add("sort-btn--active");
-  element.querySelector(".table-head__arrow").classList.add("sorted-upwards");
-  flags[flag] = true;
-  if (element === sortNameBtn) {
-    sortedArray = clientsArrayData.sort((a, b) => (`${a.surname} ${a.name} ${a.lastName}` > `${b.surname} ${b.name} ${b.lastName}` ? 1 : -1));
+  await getClientsData();
+  if (element.querySelector('.sorted-upwards')) {
+    if (element === sortNameBtn) {
+      sortedArray = clientsArrayData.sort((a, b) => (`${a.surname.toUpperCase()}${a.name.toUpperCase()}${a.lastName.toUpperCase()}` > `${b.surname.toUpperCase()}${b.name.toUpperCase()}${b.lastName.toUpperCase()}` ? 1 : -1));
+    } else {
+      sortedArray = clientsArrayData.sort((a, b) => (a[param] > b[param] ? 1 : -1));
+    }
   } else {
-    sortedArray = clientsArrayData.sort((a, b) => (a[param] > b[param] ? 1 : -1));
+    if (element === sortNameBtn) {
+      sortedArray = clientsArrayData.sort((a, b) => (`${a.surname.toUpperCase()}${a.name.toUpperCase()}${a.lastName.toUpperCase()}` < `${b.surname.toUpperCase()}${b.name.toUpperCase()}${b.lastName.toUpperCase()}` ? 1 : -1));
+    } else {
+      sortedArray = clientsArrayData.sort((a, b) => (a[param] < b[param] ? 1 : -1));
+    }
   }
   clearTable();
   sortedArray.forEach((client) => createTableRow(client));
 }
 
-function sortDownwards(element, flag, param) {
-  allSortBtns.forEach((btn) => btn.classList.remove("sort-btn--active"));
-  element.classList.add("sort-btn--active");
-  element
-    .querySelector(".table-head__arrow")
-    .classList.remove("sorted-upwards");
-  flags[flag] = false;
-  if (element === sortNameBtn) {
-    sortedArray = clientsArrayData.sort((a, b) => (`${a.surname} ${a.name} ${a.lastName}` < `${b.surname} ${b.name} ${b.lastName}` ? 1 : -1));
-  } else {
-    sortedArray = clientsArrayData.sort((a, b) => (a[param] < b[param] ? 1 : -1));
+// Функция, которая восстанавливает сортировку при добавлении/удалении/изменении клиента
+function createSortedTable() {
+  const activeBtn = document.querySelector(".sort-btn--active");
+
+  if (activeBtn === sortIdBtn) sortTable(sortIdBtn, "id");
+
+  if (activeBtn === sortNameBtn) sortTable(sortNameBtn);
+
+  if (activeBtn === sortCreateBtn) sortTable(sortCreateBtn, "createdAt");
+
+  if (activeBtn === sortChangeBtn) {
+    console.log(1);
+    sortTable(sortChangeBtn, "updatedAt");
   }
-  clearTable();
-  sortedArray.forEach((client) => createTableRow(client));
 }
 
 
@@ -494,17 +496,52 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const preloader = document.querySelector('.table__preloader');
 
-  await getClientsData();
-
   clearTable();
-
-  // Вывод отсортированной по возрастанию id таблицы при первоначальной загрузке
-  let sortedByIdArray = clientsArrayData.sort((a, b) => (a.id > b.id ? 1 : -1));
-  sortedByIdArray.forEach((client) => createTableRow(client));
-
+  await getClientsData();
+  createSortedTable();
   preloader.style.display = 'none';
 
   autocomplete(document.getElementById("mainInput"), allNames);
+
+
+  // ---Сортировка---
+
+  sortIdBtn.addEventListener("click", () => {
+    if (sortIdBtn.querySelector('.sorted-upwards')) {
+      sortIdBtn.querySelector(".table-head__arrow").classList.remove("sorted-upwards")
+    } else {
+      sortIdBtn.querySelector(".table-head__arrow").classList.add("sorted-upwards")
+    }
+    sortTable(sortIdBtn, "id");
+  })
+
+  sortNameBtn.addEventListener("click", () => {
+    if (sortNameBtn.querySelector('.sorted-upwards')) {
+      sortNameBtn.querySelector(".table-head__arrow").classList.remove("sorted-upwards")
+    } else {
+      sortNameBtn.querySelector(".table-head__arrow").classList.add("sorted-upwards")
+    }
+    sortTable(sortNameBtn);
+  });
+
+  sortCreateBtn.addEventListener("click", () => {
+    if (sortCreateBtn.querySelector('.sorted-upwards')) {
+      sortCreateBtn.querySelector(".table-head__arrow").classList.remove("sorted-upwards")
+    } else {
+      sortCreateBtn.querySelector(".table-head__arrow").classList.add("sorted-upwards")
+    }
+    sortTable(sortCreateBtn, "createdAt");
+  });
+
+  sortChangeBtn.addEventListener("click", () => {
+    if (sortChangeBtn.querySelector('.sorted-upwards')) {
+      sortChangeBtn.querySelector(".table-head__arrow").classList.remove("sorted-upwards")
+    } else {
+      sortChangeBtn.querySelector(".table-head__arrow").classList.add("sorted-upwards")
+    }
+    sortTable(sortChangeBtn, "updatedAt");
+  });
+
 
   // ---Модальные окна---
   // Закрытие по клику на кнопку
@@ -543,9 +580,8 @@ document.addEventListener("DOMContentLoaded", async () => {
           modalChange.querySelector('.server-error-message').textContent = responseChange.statusText;
         } else {
           modalChange.classList.remove("modal--is-active");
-          clearTable();
           await getClientsData();
-          clientsArrayData.forEach((client) => createTableRow(client));
+          createSortedTable();
           autocomplete(document.getElementById("mainInput"), allNames);
         }
       }
@@ -584,7 +620,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           modalAdd.classList.remove("modal--is-active");
           clearTable();
           await getClientsData();
-          clientsArrayData.forEach((client) => createTableRow(client));
+          createSortedTable();
           autocomplete(document.getElementById("mainInput"), allNames);
         }
       }
@@ -610,7 +646,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       modalChange.classList.remove("modal--is-active");
       clearTable();
       await getClientsData();
-      clientsArrayData.forEach((client) => createTableRow(client));
+      createSortedTable();
       autocomplete(document.getElementById("mainInput"), allNames);
     });
 
@@ -629,31 +665,5 @@ document.addEventListener("DOMContentLoaded", async () => {
     preloader.style.width = `${document.querySelector('.table').offsetWidth}px`;
   })
 
-
-  // ---Сортировка---
-
-  sortIdBtn.addEventListener("click", () => {
-    flags.idSortedUpwards
-      ? sortDownwards(sortIdBtn, "idSortedUpwards", "id")
-      : sortUpwards(sortIdBtn, "idSortedUpwards", "id");
-  });
-
-  sortNameBtn.addEventListener("click", () => {
-    flags.nameSortedUpwards
-      ? sortDownwards(sortNameBtn, "nameSortedUpwards")
-      : sortUpwards(sortNameBtn, "nameSortedUpwards");
-  });
-
-  sortCreateBtn.addEventListener("click", () => {
-    flags.createSortedUpwards
-      ? sortDownwards(sortCreateBtn, "createSortedUpwards", "createdAt")
-      : sortUpwards(sortCreateBtn, "createSortedUpwards", "createdAt");
-  });
-
-  sortChangeBtn.addEventListener("click", () => {
-    flags.changeSortedUpwards
-      ? sortDownwards(sortChangeBtn, "changeSortedUpwards", "updatedAt")
-      : sortUpwards(sortChangeBtn, "changeSortedUpwards", "updatedAt");
-  });
 
 });
