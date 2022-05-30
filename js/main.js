@@ -85,6 +85,38 @@ async function saveChanges() {
   );
 }
 
+// ---Валидация---
+
+let customConfig = {
+  // class of the parent element where the error/success class is added
+  classTo: 'wrapper',
+  // class of the parent element where error text element is appended
+  errorTextParent: 'wrapper',
+  // type of element to create for the error text
+  errorTextTag: 'div',
+  // class of the error text element
+  errorTextClass: 'input-error-message',
+  errorClass: 'has-danger',
+  successClass: 'has-success',
+};
+
+let form, phones, pristine;
+
+function validateForm() {
+  form = document.querySelector('.modal--is-active').querySelector('.form');
+  pristine = new Pristine(form, customConfig);
+  phones = form.querySelectorAll('[type = "tel"]');
+  phones.forEach((phone) => {
+    pristine.addValidator(phone, function (value, el) {
+      const tel = phone.inputmask.unmaskedvalue();
+      if (tel.length === 10) {
+        return true;
+      }
+      return false;
+    }, "Недопустимый формат", 2, false);
+  })
+}
+
 // ---Вспомогательные функции---
 
 function clearTable() {
@@ -99,8 +131,15 @@ function clearModal() {
   activeModal.querySelectorAll('.to-validate').forEach((input) => {
     input.removeEventListener('input', inputListener);
   })
-  activeModal.querySelectorAll("input").forEach((input) => (input.value = null));
-  activeModal.querySelectorAll('.d-block').forEach((message) => message.classList.remove('d-block'));
+  activeModal.querySelectorAll("input").forEach((input) => {
+    if (input.inputmask) {
+      input.inputmask.remove();
+    }
+    input.value = null;
+  })
+
+  if (pristine) pristine.destroy();
+
   activeModal
     .querySelectorAll(".contact-wrapper")
     .forEach((contact) => contact.remove());
@@ -128,52 +167,15 @@ function removeDeleteFlag() {
   }
 }
 
-function inputListener() {
-  this.value ? this.closest('.wrapper').children[0].classList.remove('d-block')
-    : this.closest('.wrapper').children[0].classList.add('d-block');
-}
-
-function validateForm(modal) {
-  if (!modal.querySelector('[name="surname"]').value) {
-    modal.querySelector('[name="surname"]').closest('.wrapper').children[0].classList.add('d-block');
-  }
-  modal.querySelector('[name="surname"]').addEventListener('input', inputListener);
-
-  if (!modal.querySelector('[name="name"]').value) {
-    modal.querySelector('[name="name"]').closest('.wrapper').children[0].classList.add('d-block');
-  }
-  modal.querySelector('[name="name"]').addEventListener('input', inputListener);
-
-  const allContacts = modal.querySelectorAll('.add-contact__input');
-  allContacts.forEach((input) => {
-    if (!input.value) {
-      input.closest('.wrapper').children[0].classList.add('d-block');
-    }
-    input.addEventListener('input', inputListener);
-  })
-
-  if (modal.querySelectorAll('.d-block').length) {
-    return false
-  } else {
-    return true
-  }
-}
 
 // ---Функции отрисовки---
 
-let contactSelect;
-let customSelect;
-let contactInput;
+let contactSelect, customSelect, contactInput;
 
 function createAddContactField(modal) {
   const contactsWrapper = modal.querySelector(".form__contacts-wrapper");
-  const wrapper = document.createElement('div');
-  wrapper.classList.add('wrapper', "contact-wrapper");
   const contactFieldsWrapper = document.createElement("div");
-  contactFieldsWrapper.classList.add("add-contact__field-wrapper", "flex");
-  const contactErrorMessage = document.createElement('div');
-  contactErrorMessage.classList.add("input-error-message");
-  contactErrorMessage.textContent = 'Это поле не может быть пустым';
+  contactFieldsWrapper.classList.add("add-contact__field-wrapper", "wrapper", "flex");
 
   contactSelect = document.createElement("select");
   contactSelect.classList.add("add-contact__select");
@@ -184,17 +186,27 @@ function createAddContactField(modal) {
   <option value="Другое">Другое</option>`;
 
   contactInput = document.createElement("input");
-  contactInput.classList.add("add-contact__input", "to-validate");
+  contactInput.classList.add("add-contact__input");
   contactInput.setAttribute("type", "tel");
+  contactInput.setAttribute("required", "true");
+  contactInput.setAttribute("data-pristine-required-message", "Нельзя добавить пустое поле");
+  new Inputmask("+7(999) 999-99-99").mask(contactInput);
 
-  contactSelect.addEventListener("change", (ev) => {
-    if (ev.target.value === "Телефон") {
+  contactSelect.addEventListener("change", function () {
+    pristine.destroy();
+    if (contactInput.inputmask) {
+      contactInput.inputmask.remove();
+    }
+    if (this.value === "Телефон") {
       contactInput.setAttribute("type", "tel");
-    } else if (ev.target.value === "Email") {
+      new Inputmask("+7(999) 999-99-99").mask(contactInput);
+    } else if (this.value === "Email") {
       contactInput.setAttribute("type", "email");
+      contactInput.setAttribute("data-pristine-email-message", "Введите e-mail в формате xxx@xxx.xxx")
     } else {
       contactInput.setAttribute("type", "text");
     }
+    contactInput.value = "";
   });
 
   const contactDeleteBtn = document.createElement("button");
@@ -205,8 +217,7 @@ function createAddContactField(modal) {
   fill="#B0B0B0" /></svg>`;
 
   contactFieldsWrapper.append(contactSelect, contactInput, contactDeleteBtn);
-  wrapper.append(contactErrorMessage, contactFieldsWrapper);
-  contactsWrapper.append(wrapper);
+  contactsWrapper.append(contactFieldsWrapper);
   contactDeleteBtn.addEventListener("click", (ev) => {
     ev.stopPropagation();
     contactFieldsWrapper.remove();
@@ -318,6 +329,7 @@ function createTableRow(client) {
     if (client.contacts) {
       client.contacts.forEach((contact) => {
         createAddContactField(modalChange);
+        contactInput.inputmask.remove();
         contactInput.value = contact.value;
         contactSelect
           .querySelectorAll("option")
@@ -331,6 +343,17 @@ function createTableRow(client) {
             .querySelector('[value = "Другое"]')
             .setAttribute("selected", "true");
         }
+
+        if (contactSelect.value === "Телефон") {
+          contactInput.setAttribute("type", "tel");
+          new Inputmask("+7(999) 999-99-99").mask(contactInput);
+        } else if (contactSelect.value === "Email") {
+          contactInput.setAttribute("type", "email");
+          contactInput.setAttribute("data-pristine-email-message", "Введите e-mail в формате xxx@xxx.xxx")
+        } else {
+          contactInput.setAttribute("type", "text");
+        }
+
         customSelect.update();
       });
     }
@@ -394,7 +417,6 @@ function createSortedTable() {
   if (activeBtn === sortCreateBtn) sortTable(sortCreateBtn, "createdAt");
 
   if (activeBtn === sortChangeBtn) {
-    console.log(1);
     sortTable(sortChangeBtn, "updatedAt");
   }
 }
@@ -567,8 +589,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   modalChange
     .querySelector(".modal__form")
     .addEventListener("submit", async (e) => {
+      validateForm();
       e.preventDefault();
-      if (validateForm(modalChange)) {
+      if (pristine.validate()) {
         await saveChanges();
         if (responseChange.status.toString().slice(0, 1) !== '2') {
           modalChange.querySelector('.server-error-message').textContent = responseChange.statusText;
@@ -605,8 +628,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   modalAdd
     .querySelector(".modal__form")
     .addEventListener("submit", async (e) => {
+      validateForm();
       e.preventDefault();
-      if (validateForm(modalAdd)) {
+      if (pristine.validate()) {
         await addClientData();
         if (responseAdd.status.toString().slice(0, 1) !== '2') {
           modalAdd.querySelector('.server-error-message').textContent = responseAdd.statusText;
@@ -658,6 +682,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   window.addEventListener('resize', () => {
     preloader.style.width = `${document.querySelector('.table').offsetWidth}px`;
   })
+
+
+
+
 
 
 });

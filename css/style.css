@@ -538,6 +538,10 @@ select:focus-visible {
   margin-bottom: 25px;
 }
 
+.wrapper {
+  position: relative;
+}
+
 .form__label,
 .form__input {
   display: block;
@@ -557,12 +561,20 @@ select:focus-visible {
 
 .form__input {
   height: 30px;
-  margin-bottom: 15px;
   font-weight: 600;
   font-size: 14px;
   color: var(--black);
   border: none;
   border-bottom: 1px solid #C8C5D1;
+}
+
+.name-input-wrapper {
+  margin-bottom: 0;
+  margin-top: 15px;
+}
+
+.name-input-wrapper:first-child {
+  margin-top: 0;
 }
 
 .form__input::placeholder {
@@ -578,6 +590,7 @@ select:focus-visible {
 }
 
 .add-contact__field-wrapper {
+  position: relative;
   height: 37px;
   margin-bottom: 25px;
 }
@@ -716,8 +729,10 @@ select:focus-visible {
   text-decoration-line: underline;
 }
 
-.server-error-message,
-.input-error-message {
+.server-error-message {
+  position: absolute;
+  left: 0;
+  bottom: 100%;
   width: 100%;
   margin-bottom: 10px;
   font-weight: 400;
@@ -728,24 +743,36 @@ select:focus-visible {
 }
 
 .input-error-message {
-  display: none;
+  width: 100%;
+  margin-bottom: 5px;
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 14px;
+  color: var(--red);
+  text-align: center;
+}
+
+.input-error-message {
   margin-bottom: 0;
   text-align: left;
 }
 
-.input-error-message.d-block~input,
-.input-error-message.d-block+div {
+.name-input-wrapper.has-danger input {
   outline: 1px solid var(--red);
   outline-offset: -1px;
 }
 
-.input-error-message.d-block+div {
+.add-contact__field-wrapper.has-danger {
+  outline: 1px solid var(--red);
   outline-offset: 0;
 }
 
-.d-block {
-  display: block;
+.add-contact__field-wrapper.has-danger .pristine-error {
+  position: absolute;
+  left: 0;
+  top: 100%;
 }
+
 
 /* New client modal */
 

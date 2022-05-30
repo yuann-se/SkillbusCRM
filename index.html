@@ -13,6 +13,8 @@
   <link rel="stylesheet" href="css/media.css">
 
   <script defer src="js/nice-select2.js"></script>
+  <script defer src="js/inputmask.min.js"></script>
+  <script defer src="js/pristine.js"></script>
   <script defer src="js/main.js"></script>
 </head>
 
@@ -139,18 +141,24 @@
           </div>
           <form class="modal__form form" novalidate>
             <div class="form__name-inputs-wrapper">
-              <div class="wrapper">
-                <div class="input-error-message">Это поле обязательно</div>
+              <div class="wrapper name-input-wrapper">
                 <label class="form__label" for="surname">Фамилия<span>*</span></label>
-                <input type="text" class="form__input to-validate" name="surname">
+                <input type="text" class="form__input" name="surname" data-pristine-minlength="2"
+                  data-pristine-pattern="/^[а-яА-ЯёЁ\s-]+$/" data-pristine-required-message="Это поле обязательно"
+                  data-pristine-minlength-message="Введите не менее 2-х символов"
+                  data-pristine-pattern-message="Допустимы только кириллица, дефис и пробел" required>
               </div>
-              <div class="wrapper">
-                <div class="input-error-message">Это поле обязательно</div>
+              <div class="wrapper name-input-wrapper">
                 <label for="name" class="form__label">Имя<span>*</span></label>
-                <input type="text" class="form__input to-validate" name="name">
+                <input type="text" class="form__input" name="name" data-pristine-minlength="2"
+                  data-pristine-pattern="/^[а-яА-ЯёЁ\s-]+$/" data-pristine-required-message="Это поле обязательно"
+                  data-pristine-minlength-message="Введите не менее 2-х символов"
+                  data-pristine-pattern-message="Допустимы только кириллица, дефис и пробел" required>
               </div>
-              <label for="middle-name" class="form__label">Отчество</label>
-              <input type="text" class="form__input" name="middle-name">
+              <div class="wrapper name-input-wrapper">
+                <label for="middle-name" class="form__label">Отчество</label>
+                <input type="text" class="form__input" name="middle-name">
+              </div>
             </div>
 
             <div class="form__add-contact">
@@ -186,15 +194,23 @@
           <h3 class="modal__header modal-add__header">Новый клиент</h3>
           <form class="modal__form form" novalidate>
             <div class="form__name-inputs-wrapper">
-              <div class="wrapper">
-                <div class="input-error-message">Это поле обязательно</div>
-                <input type="text" class="form__input to-validate" name="surname" placeholder="Фамилия*">
+              <div class="wrapper name-input-wrapper">
+                <input type="text" class="form__input" name="surname" placeholder="Фамилия*" data-pristine-minlength="2"
+                  data-pristine-pattern="/^[а-яА-ЯёЁ\s-]+$/"
+                  data-pristine-minlength-message="Введите не менее 2-х символов"
+                  data-pristine-pattern-message="Допустимы только кириллица, дефис и пробел"
+                  data-pristine-required-message="Это поле обязательно" required>
               </div>
-              <div class="wrapper">
-                <div class="input-error-message">Это поле обязательно</div>
-                <input type="text" class="form__input to-validate" name="name" placeholder="Имя*">
+              <div class="wrapper name-input-wrapper">
+                <input type="text" class="form__input" name="name" placeholder="Имя*" data-pristine-minlength="2"
+                  data-pristine-pattern="/^[а-яА-ЯёЁ\s-]+$/"
+                  data-pristine-minlength-message="Введите не менее 2-х символов"
+                  data-pristine-pattern-message="Допустимы только кириллица, дефис и пробел"
+                  data-pristine-required-message="Это поле обязательно" required>
               </div>
-              <input type="text" class="form__input" name="middle-name" placeholder="Отчество">
+              <div class="wrapper name-input-wrapper">
+                <input type="text" class="form__input" name="middle-name" placeholder="Отчество">
+              </div>
             </div>
 
             <div class="form__add-contact">
