@@ -1,4 +1,3 @@
-
 // ---Функции для работы с сервером---
 
 const modalDelete = document.querySelector(".modal-delete");
@@ -17,7 +16,7 @@ async function getClientsData() {
   clientsArrayData.forEach((client) => {
     let clientName = `${client.surname} ${client.name} ${client.lastName}`;
     allNames.push(clientName);
-  })
+  });
 }
 
 let responseAdd;
@@ -89,32 +88,35 @@ async function saveChanges() {
 
 let customConfig = {
   // class of the parent element where the error/success class is added
-  classTo: 'wrapper',
+  classTo: "wrapper",
   // class of the parent element where error text element is appended
-  errorTextParent: 'wrapper',
+  errorTextParent: "wrapper",
   // type of element to create for the error text
-  errorTextTag: 'div',
+  errorTextTag: "div",
   // class of the error text element
-  errorTextClass: 'input-error-message',
-  errorClass: 'has-danger',
-  successClass: 'has-success',
+  errorTextClass: "input-error-message",
+  errorClass: "has-danger",
+  successClass: "has-success",
 };
 
 let form, phones, pristine;
 
 function validateForm() {
-  form = document.querySelector('.modal--is-active').querySelector('.form');
+  form = document.querySelector(".modal--is-active").querySelector(".form");
   pristine = new Pristine(form, customConfig);
   phones = form.querySelectorAll('[type = "tel"]');
   phones.forEach((phone) => {
-    pristine.addValidator(phone, function (value, el) {
-      const tel = phone.inputmask.unmaskedvalue();
-      if (tel.length === 10) {
-        return true;
-      }
-      return false;
-    }, "Недопустимый формат", 2, false);
-  })
+    pristine.addValidator(
+      phone,
+      function (value, el) {
+        const tel = phone.inputmask.unmaskedvalue();
+        if (tel.length === 10) {
+          return true;
+        }
+        return false;
+      }, "Недопустимый формат", 2, false
+    );
+  });
 }
 
 // ---Вспомогательные функции---
@@ -128,15 +130,15 @@ function clearTable() {
 
 function clearModal() {
   const activeModal = document.querySelector(".modal--is-active");
-  activeModal.querySelectorAll('.to-validate').forEach((input) => {
-    input.removeEventListener('input', inputListener);
-  })
+  activeModal.querySelectorAll(".to-validate").forEach((input) => {
+    input.removeEventListener("input", inputListener);
+  });
   activeModal.querySelectorAll("input").forEach((input) => {
     if (input.inputmask) {
       input.inputmask.remove();
     }
     input.value = null;
-  })
+  });
 
   if (pristine) pristine.destroy();
 
@@ -147,12 +149,8 @@ function clearModal() {
 }
 
 function checkContactsAmount(modal) {
-  if (
-    modal.querySelectorAll(".add-contact__field-wrapper").length === 10
-  ) {
-    modal
-      .querySelector(".add-contact__btn")
-      .classList.add("btn-disabled");
+  if (modal.querySelectorAll(".add-contact__field-wrapper").length === 10) {
+    modal.querySelector(".add-contact__btn").classList.add("btn-disabled");
     modal
       .querySelector(".add-contact__btn")
       .setAttribute("disabled", "disabled");
@@ -167,29 +165,44 @@ function removeDeleteFlag() {
   }
 }
 
-
 // ---Функции отрисовки---
 
 let contactSelect, customSelect, contactInput;
 
+function createElement(tag, classes, textContent = null, attributes = null) {
+  const el = document.createElement(tag);
+  classes ? classes.forEach((className) => el.classList.add(className)) : null;
+  el.textContent = textContent;
+  attributes
+    ? attributes.forEach((attribute) =>
+      el.setAttribute(attribute.name, attribute.value)
+    )
+    : null;
+  return el;
+}
+
 function createAddContactField(modal) {
   const contactsWrapper = modal.querySelector(".form__contacts-wrapper");
-  const contactFieldsWrapper = document.createElement("div");
-  contactFieldsWrapper.classList.add("add-contact__field-wrapper", "wrapper", "flex");
-
-  contactSelect = document.createElement("select");
-  contactSelect.classList.add("add-contact__select");
+  const contactFieldsWrapper = createElement("div", [
+    "add-contact__field-wrapper",
+    "wrapper",
+    "flex",
+  ]);
+  contactSelect = createElement("select", ["add-contact__select"]);
   contactSelect.innerHTML = `<option value="Телефон" selected>Телефон</option>
   <option value="Email">Email</option>
   <option value="Facebook">Facebook</option>
   <option value="Vk">Vk</option>
   <option value="Другое">Другое</option>`;
 
-  contactInput = document.createElement("input");
-  contactInput.classList.add("add-contact__input");
-  contactInput.setAttribute("type", "tel");
-  contactInput.setAttribute("required", "true");
-  contactInput.setAttribute("data-pristine-required-message", "Нельзя добавить пустое поле");
+  contactInput = createElement("input", ["add-contact__input"], null, [
+    { name: "type", value: "tel" },
+    { name: "required", value: "true" },
+    {
+      name: "data-pristine-required-message",
+      value: "Нельзя добавить пустое поле",
+    },
+  ]);
   new Inputmask("+7(999) 999-99-99").mask(contactInput);
 
   contactSelect.addEventListener("change", function () {
@@ -202,16 +215,22 @@ function createAddContactField(modal) {
       new Inputmask("+7(999) 999-99-99").mask(contactInput);
     } else if (this.value === "Email") {
       contactInput.setAttribute("type", "email");
-      contactInput.setAttribute("data-pristine-email-message", "Введите e-mail в формате xxx@xxx.xxx")
+      contactInput.setAttribute(
+        "data-pristine-email-message",
+        "Введите e-mail в формате xxx@xxx.xxx"
+      );
     } else {
       contactInput.setAttribute("type", "text");
     }
     contactInput.value = "";
   });
 
-  const contactDeleteBtn = document.createElement("button");
-  contactDeleteBtn.classList.add("add-contact__delete-btn", "btn-reset");
-  contactDeleteBtn.setAttribute("type", "button");
+  const contactDeleteBtn = createElement(
+    "button",
+    ["add-contact__delete-btn", "btn-reset"],
+    null,
+    [{ name: "type", value: "button" }]
+  );
   contactDeleteBtn.innerHTML = `<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
   <path d="M6 0C2.682 0 0 2.682 0 6C0 9.318 2.682 12 6 12C9.318 12 12 9.318 12 6C12 2.682 9.318 0 6 0ZM6 10.8C3.354 10.8 1.2 8.646 1.2 6C1.2 3.354 3.354 1.2 6 1.2C8.646 1.2 10.8 3.354 10.8 6C10.8 8.646 8.646 10.8 6 10.8ZM8.154 3L6 5.154L3.846 3L3 3.846L5.154 6L3 8.154L3.846 9L6 6.846L8.154 9L9 8.154L6.846 6L9 3.846L8.154 3Z"
   fill="#B0B0B0" /></svg>`;
@@ -227,48 +246,68 @@ function createAddContactField(modal) {
 
 function createTableRow(client) {
   const tbody = document.querySelector(".tbody");
-  const tr = document.createElement("tr");
-  tr.classList.add("table__content-row", "content-row");
+  const tr = createElement("tr", ["table__content-row", "content-row"]);
   tbody.append(tr);
 
-  const tdId = document.createElement("td");
-  tdId.classList.add("content-row__cell", "content-row__cell--id");
-  tdId.textContent = client.id;
+  const tdId = createElement(
+    "td",
+    ["content-row__cell", "content-row__cell--id"],
+    client.id
+  );
+  const tdName = createElement(
+    "td",
+    ["content-row__cell", "content-row__cell--name"],
+    `${client.surname} ${client.name} ${client.lastName}`
+  );
+  tdName.setAttribute("data-name", `${tdName.textContent}`);
 
-  const tdName = document.createElement("td");
-  tdName.classList.add("content-row__cell", "content-row__cell--name");
-  tdName.textContent = `${client.surname} ${client.name} ${client.lastName}`;
-  tdName.setAttribute('data-name', `${tdName.textContent}`);
-
-  const tdCreate = document.createElement("td");
-  tdCreate.classList.add("content-row__cell", "content-row__cell--create-time");
-  const span1 = document.createElement("span");
-  const span2 = document.createElement("span");
-  span1.textContent = `${client.createdAt.slice(8, 10)}.${client.createdAt.slice(5, 7)}.${client.createdAt.slice(0, 4)} `;
-  span2.textContent = client.createdAt.slice(11, 16);
+  const tdCreate = createElement("td", [
+    "content-row__cell",
+    "content-row__cell--create-time",
+  ]);
+  const span1 = createElement(
+    "span",
+    null,
+    `${client.createdAt.slice(8, 10)}.${client.createdAt.slice(5, 7
+    )}.${client.createdAt.slice(0, 4)} `
+  );
+  const span2 = createElement("span", null, client.createdAt.slice(11, 16));
   span1.append(span2);
   tdCreate.append(span1);
 
-  const tdChange = document.createElement("td");
-  tdChange.classList.add("content-row__cell", "content-row__cell--change-time");
-  const span11 = document.createElement("span");
-  const span22 = document.createElement("span");
-  span11.textContent = `${client.updatedAt.slice(8, 10)}.${client.updatedAt.slice(5, 7)}.${client.updatedAt.slice(0, 4)} `;
-  span22.textContent = client.updatedAt.slice(11, 16);
+  const tdChange = createElement("td", [
+    "content-row__cell",
+    "content-row__cell--change-time",
+  ]);
+  const span11 = createElement(
+    "span",
+    null,
+    `${client.updatedAt.slice(8, 10)}.${client.updatedAt.slice(5,7
+    )}.${client.updatedAt.slice(0, 4)} `
+  );
+  const span22 = createElement("span", null, client.updatedAt.slice(11, 16));
   span11.append(span22);
   tdChange.append(span11);
 
-  const tdContacts = document.createElement("td");
-  tdContacts.classList.add("content-row__cell", "content-row__cell--contacts", "contacts");
+  const tdContacts = createElement("td", [
+    "content-row__cell",
+    "content-row__cell--contacts",
+    "contacts",
+  ]);
   if (client.contacts) {
     for (let n = 0; n < client.contacts.length; ++n) {
-      const btn = document.createElement("button");
-      btn.classList.add("contacts__icon", "btn-reset");
-      btn.setAttribute("data-microtip-position", "top");
-      btn.setAttribute("role", "tooltip");
-      btn.setAttribute(
-        "aria-label",
-        `${client.contacts[n].type}: ${client.contacts[n].value}`
+      const btn = createElement(
+        "button",
+        ["contacts__icon", "btn-reset"],
+        null,
+        [
+          { name: "data-microtip-position", value: "top" },
+          { name: "role", value: "tooltip" },
+          {
+            name: "aria-label",
+            value: `${client.contacts[n].type}: ${client.contacts[n].value}`,
+          },
+        ]
       );
 
       if (client.contacts[n].type === "Телефон") {
@@ -298,31 +337,30 @@ function createTableRow(client) {
     }
   }
 
-  const tdActions = document.createElement("td");
-  tdActions.classList.add("content-row__cell", "content-row__cell--actions", "actions");
-  const btnChacnge = document.createElement("button");
-  btnChacnge.classList.add("actions__btn", "btn-reset");
+  const tdActions = createElement("td", [
+    "content-row__cell",
+    "content-row__cell--actions",
+    "actions",
+  ]);
+  const btnChacnge = createElement("button", ["actions__btn", "btn-reset"]);
   btnChacnge.innerHTML = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"> <g opacity="0.7">
         <path d="M2 11.5V14H4.5L11.8733 6.62662L9.37333 4.12662L2 11.5ZM13.8067 4.69329C14.0667 4.43329 14.0667 4.01329 13.8067 3.75329L12.2467 2.19329C11.9867 1.93329 11.5667 1.93329 11.3067 2.19329L10.0867 3.41329L12.5867 5.91329L13.8067 4.69329Z" fill="#9873FF" /> </g> </svg> <span>Изменить</span>`;
 
   btnChacnge.addEventListener("click", () => {
     modalChange.classList.add("modal--is-active");
-    document.querySelector('html').classList.add('no-scroll');
-    modalChange.querySelector('.server-error-message').textContent = null;
+    document.querySelector("html").classList.add("no-scroll");
+    modalChange.querySelector(".server-error-message").textContent = null;
     modalChange
       .querySelector(".add-contact__btn")
       .classList.remove("btn-disabled");
-    modalChange
-      .querySelector(".add-contact__btn")
-      .removeAttribute("disabled");
+    modalChange.querySelector(".add-contact__btn").removeAttribute("disabled");
     tr.setAttribute("data-delete", "delete");
     modalChange.querySelector(
       ".modal__client-id"
     ).textContent = `ID: ${client.id}`;
     modalChange.querySelector('[name = "surname"]').value = client.surname;
     modalChange.querySelector('[name = "name"]').value = client.name;
-    modalChange.querySelector('[name = "middle-name"]').value =
-      client.lastName;
+    modalChange.querySelector('[name = "middle-name"]').value = client.lastName;
     modalChange
       .querySelectorAll(".add-contact__field-wrapper")
       .forEach((item) => item.remove());
@@ -349,7 +387,10 @@ function createTableRow(client) {
           new Inputmask("+7(999) 999-99-99").mask(contactInput);
         } else if (contactSelect.value === "Email") {
           contactInput.setAttribute("type", "email");
-          contactInput.setAttribute("data-pristine-email-message", "Введите e-mail в формате xxx@xxx.xxx")
+          contactInput.setAttribute(
+            "data-pristine-email-message",
+            "Введите e-mail в формате xxx@xxx.xxx"
+          );
         } else {
           contactInput.setAttribute("type", "text");
         }
@@ -360,8 +401,7 @@ function createTableRow(client) {
     checkContactsAmount(modalChange);
   });
 
-  const btnDelete = document.createElement("button");
-  btnDelete.classList.add("actions__btn", "btn-reset");
+  const btnDelete = createElement("button", ["actions__btn", "btn-reset"]);
   btnDelete.innerHTML = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><g opacity="0.7">
       <path
         d="M8 2C4.682 2 2 4.682 2 8C2 11.318 4.682 14 8 14C11.318 14 14 11.318 14 8C14 4.682 11.318 2 8 2ZM8 12.8C5.354 12.8 3.2 10.646 3.2 8C3.2 5.354 5.354 3.2 8 3.2C10.646 3.2 12.8 5.354 12.8 8C12.8 10.646 10.646 12.8 8 12.8ZM10.154 5L8 7.154L5.846 5L5 5.846L7.154 8L5 10.154L5.846 11L8 8.846L10.154 11L11 10.154L8.846 8L11 5.846L10.154 5Z"
@@ -389,17 +429,31 @@ async function sortTable(element, param) {
   allSortBtns.forEach((btn) => btn.classList.remove("sort-btn--active"));
   element.classList.add("sort-btn--active");
   await getClientsData();
-  if (element.querySelector('.sorted-upwards')) {
+  if (element.querySelector(".sorted-upwards")) {
     if (element === sortNameBtn) {
-      sortedArray = clientsArrayData.sort((a, b) => (`${a.surname.toUpperCase()}${a.name.toUpperCase()}${a.lastName.toUpperCase()}` > `${b.surname.toUpperCase()}${b.name.toUpperCase()}${b.lastName.toUpperCase()}` ? 1 : -1));
+      sortedArray = clientsArrayData.sort((a, b) =>
+        `${a.surname.toUpperCase()}${a.name.toUpperCase()}${a.lastName.toUpperCase()}` >
+          `${b.surname.toUpperCase()}${b.name.toUpperCase()}${b.lastName.toUpperCase()}`
+          ? 1
+          : -1
+      );
     } else {
-      sortedArray = clientsArrayData.sort((a, b) => (a[param] > b[param] ? 1 : -1));
+      sortedArray = clientsArrayData.sort((a, b) =>
+        a[param] > b[param] ? 1 : -1
+      );
     }
   } else {
     if (element === sortNameBtn) {
-      sortedArray = clientsArrayData.sort((a, b) => (`${a.surname.toUpperCase()}${a.name.toUpperCase()}${a.lastName.toUpperCase()}` < `${b.surname.toUpperCase()}${b.name.toUpperCase()}${b.lastName.toUpperCase()}` ? 1 : -1));
+      sortedArray = clientsArrayData.sort((a, b) =>
+        `${a.surname.toUpperCase()}${a.name.toUpperCase()}${a.lastName.toUpperCase()}` <
+          `${b.surname.toUpperCase()}${b.name.toUpperCase()}${b.lastName.toUpperCase()}`
+          ? 1
+          : -1
+      );
     } else {
-      sortedArray = clientsArrayData.sort((a, b) => (a[param] < b[param] ? 1 : -1));
+      sortedArray = clientsArrayData.sort((a, b) =>
+        a[param] < b[param] ? 1 : -1
+      );
     }
   }
   clearTable();
@@ -421,40 +475,53 @@ function createSortedTable() {
   }
 }
 
-
 // ---Функции для поиска---
 
 function autocomplete(inp, arr) {
   let currentFocus;
   inp.addEventListener("input", function () {
-    let autocompleteList;
-    let nameOption;
-    let val = this.value;
-
     closeAllLists();
-    if (!val.trim()) { return false; }
+    let val = this.value;
+    if (!val.trim()) {
+      return false;
+    }
     currentFocus = -1;
-    /* создайте элемент DIV, в котором будет список значений для автозаполнения */
-    autocompleteList = document.createElement("DIV");
-    autocompleteList.setAttribute("id", this.id + "autocomplete-list");
-    autocompleteList.classList.add('autocomplete-items');
+    const autocompleteList = createElement(
+      "div",
+      ["autocomplete-items"],
+      null,
+      [{ name: "id", value: this.id + "autocomplete-list" }]
+    );
     this.parentNode.appendChild(autocompleteList);
 
     for (let i = 0; i < arr.length; i++) {
       if (arr[i].toUpperCase().includes(val.toUpperCase())) {
-        nameOption = document.createElement("div");
+        const nameOption = document.createElement("div");
         nameOption.innerHTML = arr[i];
         nameOption.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
 
         nameOption.addEventListener("click", function () {
           inp.value = this.getElementsByTagName("input")[0].value;
           closeAllLists();
-          if (document.querySelector('.is-highlighted')) {
-            document.querySelector('.is-highlighted').classList.remove('is-highlighted');
+          if (document.querySelector(".is-highlighted")) {
+            document
+              .querySelector(".is-highlighted")
+              .classList.remove("is-highlighted");
           }
-          document.querySelector(`[data-name = "${inp.value}"]`).closest('.content-row').classList.add('is-highlighted');
-          document.querySelector('.is-highlighted').scrollIntoView({ block: 'center' });
-          setTimeout(() => document.querySelector('.is-highlighted').classList.remove('is-highlighted'), 3000);
+          document
+            .querySelector(`[data-name = "${inp.value}"]`)
+            .closest(".content-row")
+            .classList.add("is-highlighted");
+          document
+            .querySelector(".is-highlighted")
+            .scrollIntoView({ block: "center" });
+          setTimeout(
+            () =>
+              document
+                .querySelector(".is-highlighted")
+                .classList.remove("is-highlighted"),
+            3000
+          );
         });
         autocompleteList.appendChild(nameOption);
       }
@@ -463,12 +530,17 @@ function autocomplete(inp, arr) {
 
   // Управление с клавиатуры
   inp.addEventListener("keydown", function (e) {
-    let autocompleteItems = document.getElementById(this.id + "autocomplete-list");
-    if (autocompleteItems) autocompleteItems = autocompleteItems.getElementsByTagName("div");
-    if (e.keyCode == 40) { //стрелка вниз
+    let autocompleteItems = document.getElementById(
+      this.id + "autocomplete-list"
+    );
+    if (autocompleteItems)
+      autocompleteItems = autocompleteItems.getElementsByTagName("div");
+    if (e.keyCode == 40) {
+      //стрелка вниз
       currentFocus++;
       addActive(autocompleteItems);
-    } else if (e.keyCode == 38) { //стрелка вверх
+    } else if (e.keyCode == 38) {
+      //стрелка вверх
       currentFocus--;
       addActive(autocompleteItems);
     } else if (e.keyCode == 13) {
@@ -497,7 +569,7 @@ function autocomplete(inp, arr) {
       items[i].classList.remove("autocomplete-active");
     }
     if (currentFocus >= items.length) currentFocus = 0;
-    if (currentFocus < 0) currentFocus = (items.length - 1);
+    if (currentFocus < 0) currentFocus = items.length - 1;
     /*добавить класса "autocomplete-active": */
     items[currentFocus].classList.add("autocomplete-active");
   }
@@ -508,66 +580,78 @@ function autocomplete(inp, arr) {
   });
 }
 
-
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
 
 document.addEventListener("DOMContentLoaded", async () => {
-
-  const preloader = document.querySelector('.table__preloader');
+  const preloader = document.querySelector(".table__preloader");
 
   clearTable();
   await getClientsData();
   createSortedTable();
-  preloader.style.display = 'none';
+  preloader.style.display = "none";
 
   autocomplete(document.getElementById("mainInput"), allNames);
-
 
   // ---Сортировка---
 
   sortIdBtn.addEventListener("click", () => {
-    if (sortIdBtn.querySelector('.sorted-upwards')) {
-      sortIdBtn.querySelector(".table-head__arrow").classList.remove("sorted-upwards")
+    if (sortIdBtn.querySelector(".sorted-upwards")) {
+      sortIdBtn
+        .querySelector(".table-head__arrow")
+        .classList.remove("sorted-upwards");
     } else {
-      sortIdBtn.querySelector(".table-head__arrow").classList.add("sorted-upwards")
+      sortIdBtn
+        .querySelector(".table-head__arrow")
+        .classList.add("sorted-upwards");
     }
     sortTable(sortIdBtn, "id");
-  })
+  });
 
   sortNameBtn.addEventListener("click", () => {
-    if (sortNameBtn.querySelector('.sorted-upwards')) {
-      sortNameBtn.querySelector(".table-head__arrow").classList.remove("sorted-upwards")
+    if (sortNameBtn.querySelector(".sorted-upwards")) {
+      sortNameBtn
+        .querySelector(".table-head__arrow")
+        .classList.remove("sorted-upwards");
     } else {
-      sortNameBtn.querySelector(".table-head__arrow").classList.add("sorted-upwards")
+      sortNameBtn
+        .querySelector(".table-head__arrow")
+        .classList.add("sorted-upwards");
     }
     sortTable(sortNameBtn);
   });
 
   sortCreateBtn.addEventListener("click", () => {
-    if (sortCreateBtn.querySelector('.sorted-upwards')) {
-      sortCreateBtn.querySelector(".table-head__arrow").classList.remove("sorted-upwards")
+    if (sortCreateBtn.querySelector(".sorted-upwards")) {
+      sortCreateBtn
+        .querySelector(".table-head__arrow")
+        .classList.remove("sorted-upwards");
     } else {
-      sortCreateBtn.querySelector(".table-head__arrow").classList.add("sorted-upwards")
+      sortCreateBtn
+        .querySelector(".table-head__arrow")
+        .classList.add("sorted-upwards");
     }
     sortTable(sortCreateBtn, "createdAt");
   });
 
   sortChangeBtn.addEventListener("click", () => {
-    if (sortChangeBtn.querySelector('.sorted-upwards')) {
-      sortChangeBtn.querySelector(".table-head__arrow").classList.remove("sorted-upwards")
+    if (sortChangeBtn.querySelector(".sorted-upwards")) {
+      sortChangeBtn
+        .querySelector(".table-head__arrow")
+        .classList.remove("sorted-upwards");
     } else {
-      sortChangeBtn.querySelector(".table-head__arrow").classList.add("sorted-upwards")
+      sortChangeBtn
+        .querySelector(".table-head__arrow")
+        .classList.add("sorted-upwards");
     }
     sortTable(sortChangeBtn, "updatedAt");
   });
-
 
   // ---Модальные окна---
   // Закрытие по клику на кнопку
   modalCloseBtns.forEach((btn) => {
     btn.addEventListener("click", () => {
-      document.querySelector('html').classList.remove('no-scroll');
+      document.querySelector("html").classList.remove("no-scroll");
       clearModal();
       removeDeleteFlag();
     });
@@ -576,14 +660,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Закрытие по клику на оверлей
   document.querySelectorAll(".modal").forEach((modal) =>
     modal.addEventListener("click", (ev) => {
-      document.querySelector('html').classList.remove('no-scroll');
+      document.querySelector("html").classList.remove("no-scroll");
       if (!ev.target.closest(".modal__content")) {
         clearModal();
         removeDeleteFlag();
       }
     })
   );
-
 
   // ---"Изменить данные"---
   modalChange
@@ -593,8 +676,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       e.preventDefault();
       if (pristine.validate()) {
         await saveChanges();
-        if (responseChange.status.toString().slice(0, 1) !== '2') {
-          modalChange.querySelector('.server-error-message').textContent = responseChange.statusText;
+        if (responseChange.status.toString().slice(0, 1) !== "2") {
+          modalChange.querySelector(".server-error-message").textContent =
+            responseChange.statusText;
         } else {
           modalChange.classList.remove("modal--is-active");
           await getClientsData();
@@ -617,12 +701,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       checkContactsAmount(modalChange);
     });
 
-
   // ---"Добавить клиента"---
   document.querySelector(".main__btn").addEventListener("click", () => {
     modalAdd.classList.add("modal--is-active");
-    document.querySelector('html').classList.add('no-scroll');
-    modalAdd.querySelector('.server-error-message').textContent = null;
+    document.querySelector("html").classList.add("no-scroll");
+    modalAdd.querySelector(".server-error-message").textContent = null;
   });
 
   modalAdd
@@ -632,8 +715,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       e.preventDefault();
       if (pristine.validate()) {
         await addClientData();
-        if (responseAdd.status.toString().slice(0, 1) !== '2') {
-          modalAdd.querySelector('.server-error-message').textContent = responseAdd.statusText;
+        if (responseAdd.status.toString().slice(0, 1) !== "2") {
+          modalAdd.querySelector(".server-error-message").textContent =
+            responseAdd.statusText;
         } else {
           clearModal(modalAdd);
           clearTable();
@@ -647,8 +731,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   modalAdd
     .querySelector(".form__reset-btn")
     .addEventListener("click", () =>
-      modalAdd.classList.remove("modal--is-active")
-    );
+      modalAdd.classList.remove("modal--is-active"));
 
   modalAdd.querySelector(".add-contact__btn").addEventListener("click", () => {
     createAddContactField(modalAdd);
@@ -675,17 +758,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       removeDeleteFlag();
     });
 
-
   // Устанавливаем ширину блока с анимацией загрузки по ширине таблицы
-  preloader.style.width = `${document.querySelector('.table').offsetWidth}px`;
+  preloader.style.width = `${document.querySelector(".table").offsetWidth}px`;
 
-  window.addEventListener('resize', () => {
-    preloader.style.width = `${document.querySelector('.table').offsetWidth}px`;
-  })
-
-
-
-
-
-
+  window.addEventListener("resize", () => {
+    preloader.style.width = `${document.querySelector(".table").offsetWidth}px`;
+  });
 });
