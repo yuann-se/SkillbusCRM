@@ -2,6 +2,8 @@
 
 CRM для работы с контактной информацией студентов оффлайн-курсов Skillbus.
 
+Для запуска необходимо выполнить команду `node index`, находясь в директории crm-backend.
+
 ## Превью
 
 ![Превью](https://drive.google.com/uc?export=view&id=1S9Z0hNeXwT2vEnAKrJMsnD5A7YFISZ_s)
